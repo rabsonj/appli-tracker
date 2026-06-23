@@ -1,0 +1,40 @@
+from rest_framework import serializers
+from applications import models as application_models
+from users import serializers as user_serializers
+
+
+class AuditLogSerializer(serializers.ModelSerializer):
+    actor = user_serializers.UserSerializer(read_only=True)
+
+    class Meta:
+        model = application_models.AuditLog
+        fields = ("id", "actor", "from_status", "to_status", "comment", "created_at")
+
+
+class ApplicationSerializer(serializers.ModelSerializer):
+    owner = user_serializers.UserSerializer(read_only=True)
+    audit_logs = AuditLogSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = application_models.Application
+        fields = (
+            "id", "owner", "title", "category", "description",
+            "amount", "status", "created_at", "updated_at", "audit_logs",
+        )
+        read_only_fields = (
+            "id", "owner", "status", "created_at", "updated_at", "audit_logs",
+        )
+
+
+class ApplicationWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = application_models.Application
+        fields = ("title", "category", "description", "amount")
+
+    def validate_category(self, value):
+        valid = [c[0] for c in application_models.Application.CATEGORY_CHOICES]
+        if value not in valid:
+            raise serializers.ValidationError(
+                f"Must be one of: {', '.join(valid)}"
+            )
+        return value

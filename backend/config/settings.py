@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_fsm',
+    'common',
     'users',
     'applications',
 ]
@@ -63,6 +64,7 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": (
         "rest_framework.renderers.JSONRenderer",
     ),
+    "EXCEPTION_HANDLER": "common.exceptions.custom_exception_handler",
 }
 
 # JWT
