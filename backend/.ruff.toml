@@ -1,0 +1,22 @@
+line-length = 88
+target-version = "py314"
+
+exclude = [
+    ".git",
+    ".ruff_cache",
+    ".pytest_cache",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "**/migrations",
+]
+
+[lint]
+select = ["E", "F", "I", "DJ"]
+
+[format]
+quote-style = "double"
+
+[lint.per-file-ignores]
+"manage.py" = ["E402"]
+

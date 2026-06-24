@@ -17,6 +17,7 @@ pytest = "*"
 pytest-django = "*"
 factory-boy = "*"
 pytest-cov = "*"
+ruff = "*"
 
 [requires]
 python_version = "3.14"

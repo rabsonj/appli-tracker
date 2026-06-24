@@ -1,6 +1,24 @@
+from typing import Any
 from rest_framework.views import exception_handler
+from rest_framework.response import Response
 
-def custom_exception_handler(exc, context):
+
+def custom_exception_handler(
+    exc: Exception, context: dict[str, Any]
+) -> Response | None:
+    """Formats API exceptions into a standard JSON structure.
+
+    This handler takes the standard DRF exception response and reformats it
+    into a consistent JSON object with 'error', 'detail', and 'status_code' keys.
+
+    Args:
+        exc: The exception instance.
+        context: A dictionary containing the view and request.
+
+    Returns:
+        A DRF Response object with the formatted error, or None if the
+        exception could not be handled.
+    """
     response = exception_handler(exc, context)
 
     if response is not None:

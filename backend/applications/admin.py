@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from applications import models as application_models
 
 
@@ -13,7 +14,14 @@ class ApplicationAdmin(admin.ModelAdmin):
 @admin.register(application_models.AuditLog)
 class AuditLogAdmin(admin.ModelAdmin):
     list_display = ("application", "actor", "from_status", "to_status", "created_at")
-    readonly_fields = ("application", "actor", "from_status", "to_status", "comment", "created_at")
+    readonly_fields = (
+        "application",
+        "actor",
+        "from_status",
+        "to_status",
+        "comment",
+        "created_at",
+    )
 
     def has_add_permission(self, request):
         return False
