@@ -38,3 +38,11 @@ class ApplicationWriteSerializer(serializers.ModelSerializer):
                 f"Must be one of: {', '.join(valid)}"
             )
         return value
+
+
+class TransitionCommentSerializer(serializers.Serializer):
+    comment = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        error_messages={"blank": "A comment is required for this action."},
+    )
