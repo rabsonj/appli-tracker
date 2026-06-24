@@ -172,8 +172,9 @@ cython_debug/
 .vscode/
 
 ### NextJS ###
+.next
 # dependencies
-/node_modules
+node_modules
 /.pnp
 .pnp.js
 
@@ -200,9 +201,6 @@ yarn-error.log*
 # local env files
 .env*.local
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -213,3 +211,38 @@ next-env.d.ts
 # Docker
 postgres_data/
 .docker/
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+.next
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
