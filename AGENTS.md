@@ -474,6 +474,11 @@ the run.
 | `draft_application` | `Application` in DRAFT status | `applicant` |
 | `submitted_application` | `Application` in SUBMITTED status | `draft_application` |
 | `under_review_application` | `Application` in UNDER_REVIEW status | `submitted_application` |
+| `api_client` | Unauthenticated `APIClient` | - |
+| `applicant_client` | `APIClient` authenticated as `applicant` | `api_client`, `applicant` |
+| `reviewer_client` | `APIClient` authenticated as `reviewer` | `api_client`, `reviewer` |
+| `other_applicant` | A second saved `User` with `role=applicant` | `db` |
+| `other_application` | `Application` owned by `other_applicant` | `other_applicant` |
 
 **What must be tested — non-negotiable:**
 
@@ -540,22 +545,11 @@ chore: configure Postgres via DATABASE_URL with dotenv
 test: add state machine unit tests with pytest fixtures
 ```
 
-**PR sequence so far:**
-```
-PR 1  — feat/user-model             Custom User model + admin
-PR 2  — feat/postgres-config        Postgres via DATABASE_URL + dotenv
-PR 3  — feat/application-models     Application + AuditLog models + django-fsm
-PR 4  — feat/auth-endpoints         JWT login + /me/ endpoint
-PR 5  — feat/application-crud       CRUD endpoints + permission classes
-PR 6  — feat/transition-endpoints   Transition endpoints + audit log
-PR 7  — feat/state-machine-tests    State machine unit tests (pytest)
-PR 8  — feat/api-auth-tests         API authorization tests (coming next)
-```
-
 **Before opening a PR:**
 - [ ] `pytest` passes with no failures
 - [ ] `python manage.py check` returns no issues
 - [ ] `.env.example` is updated if new env vars were added
+- [ ] Format files with `pipenv run pytest --cov=. --cov-report=term-missing -v`
 - [ ] Migration files are included if models changed
 
 ---

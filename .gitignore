@@ -209,3 +209,7 @@ next-env.d.ts
 
 # Ruff
 .ruff_cache/
+
+# Docker
+postgres_data/
+.docker/

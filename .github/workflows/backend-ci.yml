@@ -74,4 +74,4 @@ jobs:
 
       - name: Coverage summary
         working-directory: backend
-        run: pipenv run coverage report --fail-under=40
+        run: pipenv run coverage report --fail-under=90
