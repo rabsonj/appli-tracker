@@ -8,9 +8,7 @@ from users import models as user_models
 class CustomUserAdmin(dj_auth_admin.UserAdmin):
     list_display = ("username", "email", "role", "is_staff")
     list_filter = ("role", "is_staff")
-    fieldsets = dj_auth_admin.UserAdmin.fieldsets + (
-        ("Role", {"fields": ("role",)}),
-    )
+    fieldsets = dj_auth_admin.UserAdmin.fieldsets + (("Role", {"fields": ("role",)}),)
     add_fieldsets = dj_auth_admin.UserAdmin.add_fieldsets + (
         ("Role", {"fields": ("role",)}),
     )
