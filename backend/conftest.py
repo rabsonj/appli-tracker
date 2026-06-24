@@ -1,4 +1,5 @@
 import pytest
+from rest_framework.test import APIClient
 
 from applications import models as application_models
 from users import models as user_models
@@ -53,3 +54,45 @@ def under_review_application(
     submitted_application.start_review()
     submitted_application.save()
     return submitted_application
+
+
+@pytest.fixture
+def api_client() -> APIClient:
+    """A basic, unauthenticated API client."""
+    return APIClient()
+
+
+@pytest.fixture
+def applicant_client(api_client: APIClient, applicant: user_models.User) -> APIClient:
+    """An API client authenticated as the 'applicant' user."""
+    api_client.force_authenticate(user=applicant)
+    return api_client
+
+
+@pytest.fixture
+def reviewer_client(api_client: APIClient, reviewer: user_models.User) -> APIClient:
+    """An API client authenticated as the 'reviewer' user."""
+    api_client.force_authenticate(user=reviewer)
+    return api_client
+
+
+@pytest.fixture
+def other_applicant(db: None) -> user_models.User:
+    """A second user with the 'applicant' role."""
+    return user_models.User.objects.create_user(
+        username="other_applicant",
+        password="other_applicant123",
+        role=user_models.User.ROLE_APPLICANT,
+    )
+
+
+@pytest.fixture
+def other_application(
+    db: None, other_applicant: user_models.User
+) -> application_models.Application:
+    """An application owned by the 'other_applicant'."""
+    return application_models.Application.objects.create(
+        owner=other_applicant,
+        title="Other Test Application",
+        category="general",
+    )
