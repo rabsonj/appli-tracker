@@ -8,11 +8,11 @@ export default function RootLayout({
   return (
     <AppLayout navItems={[
         {
-          title: "My Applications",
-          url: "/applications",
+          title: "Applications",
+          url: "/queue",
         },
       ]}
-      breadcrumb='My Applications'
+      breadcrumb='Applications'
     >
       {children}
     </AppLayout>
