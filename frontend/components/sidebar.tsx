@@ -39,7 +39,7 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent className="mt-5 px-1">
         <SidebarMenu>
-          {navItems.map((item) => {
+          {(navItems || []).map((item) => {
             const isActive = pathname === item.url || pathname.startsWith(item.url + "/")
 
             return (
