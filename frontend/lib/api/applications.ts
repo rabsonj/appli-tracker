@@ -1,10 +1,10 @@
 import {
   Application,
   PatchedApplication,
-  RejectApplication,
-  ReturnForChanges,
-} from "@/src/types/api";
-import { ApplicationWritePayload } from "@/types";
+  ApplicationWritePayload,
+  ApplicationReturnedForChangesPayload,
+  ApplicationRejectionPayload
+} from "@/types";
 import { apiClient } from "@/lib/axios";
 
 /**
@@ -90,7 +90,7 @@ export const approveApplication = async (id: number): Promise<Application> => {
  */
 export const rejectApplication = async (
   id: number,
-  data: RejectApplication
+  data: ApplicationRejectionPayload
 ): Promise<Application> => {
   const res = await apiClient.post(`/applications/${id}/reject/`, data);
   return res.data;
@@ -104,7 +104,7 @@ export const rejectApplication = async (
  */
 export const returnForChanges = async (
   id: number,
-  data: ReturnForChanges
+  data: ApplicationReturnedForChangesPayload
 ): Promise<Application> => {
   const res = await apiClient.post(`/applications/${id}/return-for-changes/`, data);
   return res.data;

@@ -13,6 +13,7 @@ export type AuditLog = components["schemas"]["AuditLog"];
 export type ApplicationStatusEnum = components["schemas"]["StatusEnum"] | ReturnForChangesEnum;
 export type ApplicationCategoryEnum = components["schemas"]["CategoryEnum"];
 export type RoleEnum = components["schemas"]["RoleEnum"];
+export type AuthToken = components["schemas"]["TokenRefresh"];
 
 export type Role = "applicant" | "reviewer";
 
@@ -37,6 +38,14 @@ export interface ApplicationWritePayload {
   amount?: string;
 }
 
+export interface ApplicationRejectionPayload {
+  comment: string
+}
+
+export interface ApplicationReturnedForChangesPayload {
+  comment: string
+}
+
 export interface TransitionCommentPayload {
   comment: string;
 }
@@ -51,3 +60,8 @@ export type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 };
+
+export interface Login {
+  username: string
+  password: string
+}
