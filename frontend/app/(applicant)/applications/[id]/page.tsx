@@ -396,11 +396,11 @@ export default function ApplicationDetailPage() {
                     <div>
                       <p className="text-sm">
                         <span className="font-medium">{log.actor.email}</span>{" "}
-                        moved to <StatusBadge status={log.to_status} />
+                        moved to <StatusBadge status={log.to_status as ApplicationStatusEnum} />
                       </p>
                       {log.comment && (
                         <p className="text-xs text-muted-foreground mt-0.5 italic">
-                          "{log.comment}"
+                          &quot;{log.comment}&quot;
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-0.5">
