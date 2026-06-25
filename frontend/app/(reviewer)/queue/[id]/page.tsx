@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { Application, ApplicationStatusEnum } from "@/types";
 import { getInitials } from "@/utils/user";
+import { formatAmount } from "@/utils/application";
 
 const statusConfig: Record<
   ApplicationStatusEnum,
@@ -317,6 +318,13 @@ export default function ReviewerApplicationDetailPage() {
               <p className="text-xs text-muted-foreground mb-1">Category</p>
               <p className="text-sm capitalize">
                 {app.category.replace("_", " ")}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground mb-1">Amount</p>
+              <p className="text-sm">
+                ZMW{" "}
+                {formatAmount(app.amount || 0)}
               </p>
             </div>
             <div>

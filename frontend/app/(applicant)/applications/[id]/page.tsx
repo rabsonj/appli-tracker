@@ -28,6 +28,7 @@ import {
   ApplicationStatusEnum,
   PatchedApplication,
 } from "@/types";
+import { formatAmount } from "@/utils/application";
 
 const CATEGORIES: { value: ApplicationCategoryEnum; label: string }[] = [
   { value: "general", label: "General Request" },
@@ -104,6 +105,7 @@ export default function ApplicationDetailPage() {
     title: "",
     category: "general",
     description: "",
+    amount: undefined,
   });
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -117,6 +119,7 @@ export default function ApplicationDetailPage() {
           title: data.title,
           category: data.category,
           description: data.description,
+          amount: data.amount,
         });
       })
       .catch(() => toast.error("Failed to load application."))
@@ -130,7 +133,7 @@ export default function ApplicationDetailPage() {
    * @param field - The field that changed.
    * @param value - The new value of the field.
    */
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | undefined | number) => {
     setForm((f) => ({ ...f, [field]: value }));
     setDirty(true);
   };
@@ -144,6 +147,7 @@ export default function ApplicationDetailPage() {
       title: app.title,
       category: app.category,
       description: app.description,
+      amount: app.amount
     });
     setDirty(false);
   };
@@ -287,6 +291,20 @@ export default function ApplicationDetailPage() {
                 </div>
 
                 <div className="space-y-1">
+                  <Label htmlFor="amount">Amount in ZMW (optional)</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    placeholder="Enter amount"
+                    value={form.amount ?? ""}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      handleChange("amount", value === "" ? undefined : Number(value));
+                    }}
+                  />
+                </div>
+
+                <div className="space-y-1">
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
@@ -333,6 +351,13 @@ export default function ApplicationDetailPage() {
                   </p>
                   <p className="text-sm capitalize">
                     {app.category.replace("_", " ")}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Amount</p>
+                  <p className="text-sm">
+                    ZMW{" "}
+                    {formatAmount(app.amount || 0)}
                   </p>
                 </div>
                 <div>

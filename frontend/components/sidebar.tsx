@@ -21,9 +21,11 @@ import { useAuthStore } from "@/store/auth";
 
 export function AppSidebar({
   navItems,
+  description = 'Create and Track Applications',
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
   navItems?: { title: string; url: string }[];
+  description?: string
 }) {
   const pathname = usePathname()
   const user = useAuthStore((state) => state.user)
@@ -37,7 +39,7 @@ export function AppSidebar({
           </div>
           <div className="flex flex-col gap-0.5 leading-none">
             <span className="font-medium">Appli Tracker</span>
-            <span className="font-light text-xs">Create and Track Applications</span>
+            <span className="font-light text-xs">{description}</span>
           </div>
         </div>
       </SidebarHeader>

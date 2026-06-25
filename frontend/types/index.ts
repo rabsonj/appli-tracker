@@ -35,7 +35,7 @@ export interface ApplicationWritePayload {
   title: string;
   category: Category;
   description?: string;
-  amount?: string;
+  amount?: number;
 }
 
 export interface ApplicationRejectionPayload {
