@@ -1,25 +1,7 @@
-[[source]]
-url = "https://pypi.org/simple"
-verify_ssl = true
-name = "pypi"
 
 [packages]
-python-dotenv = "*"
-dj-database-url = "*"
-psycopg = {extras = ["binary"], version = "*"}
-django-fsm = "*"
-djangorestframework = "*"
-djangorestframework-simplejwt = "*"
-django-cors-headers = "*"
-drf-spectacular = "*"
+gunicorn = "*"
+whitenoise = "*"
+psycopg = {extras = ["pool", "binary"], version = "*"}
 
 [dev-packages]
-pytest = "*"
-pytest-django = "*"
-factory-boy = "*"
-pytest-cov = "*"
-ruff = "*"
-
-[requires]
-python_version = "3.14"
-python_full_version = "3.14.6"
