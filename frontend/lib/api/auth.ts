@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/axios";
-import { AuthToken, Login, User } from "@/src/types/api";
+import { AuthToken, Login, User } from "@/types";
 
 /**
  * Logs in a user.
