@@ -4,6 +4,10 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 
+/**
+ * Renders the home page, which redirects the user based on their authentication status and role.
+ * @returns null
+ */
 export default function HomePage() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuthStore();

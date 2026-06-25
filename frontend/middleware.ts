@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_ROUTES = ["/login"];
 
+/**
+ * Middleware function to handle authentication and authorization.
+ * @param request - The incoming request.
+ * @returns The response.
+ */
 export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
 
@@ -10,12 +15,7 @@ export function middleware(request: NextRequest): NextResponse {
 
   if (pathname === "/login" && token) {
     return NextResponse.redirect(
-      new URL(
-        role === "reviewer"
-          ? "/queue"
-          : "/applications",
-        request.url
-      )
+      new URL(role === "reviewer" ? "/queue" : "/applications", request.url)
     );
   }
 

@@ -1,29 +1,47 @@
-"use client"
+"use client";
 
+import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Application, ApplicationStatusEnum } from "@/types";
 import { Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 
-export interface Application {
-  id: number;
-  title: string;
-  description: string;
-  status: string;
-  category: string;
-  updated_at: string;
-}
-
-type StatusKey = "draft" | "submitted" | "under_review" | "approved" | "rejected";
-
-const statusConfig: Record<StatusKey, { label: string; className: string }> = {
-  draft:        { label: "Draft",        className: "bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-300"      },
-  submitted:    { label: "Submitted",    className: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"      },
-  under_review: { label: "Under Review", className: "bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300" },
-  approved:     { label: "Approved",     className: "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300"  },
-  rejected:     { label: "Rejected",     className: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300"          },
+const statusConfig: Record<
+  ApplicationStatusEnum,
+  { label: string; className: string }
+> = {
+  draft: {
+    label: "Draft",
+    className: "bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-300",
+  },
+  submitted: {
+    label: "Submitted",
+    className: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+  },
+  under_review: {
+    label: "Under Review",
+    className:
+      "bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300",
+  },
+  approved: {
+    label: "Approved",
+    className:
+      "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300",
+  },
+  rejected: {
+    label: "Rejected",
+    className: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
+  },
+  returned_for_changes: {
+    label: "Returned for Changes",
+    className: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
+  },
 };
 
+/**
+ * The columns for the applications data table.
+ */
 export const columns: ColumnDef<Application>[] = [
   {
     accessorKey: "title",
@@ -41,8 +59,11 @@ export const columns: ColumnDef<Application>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as StatusKey;
-      const config = statusConfig[status] ?? { label: status, className: "bg-gray-50 text-gray-700" };
+      const status = row.getValue("status") as ApplicationStatusEnum;
+      const config = statusConfig[status] ?? {
+        label: status,
+        className: "bg-gray-50 text-gray-700",
+      };
       return <Badge className={config.className}>{config.label}</Badge>;
     },
   },

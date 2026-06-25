@@ -15,50 +15,104 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle, XCircle, RotateCcw, Eye, Loader2, Info, Clock } from "lucide-react";
+import {
+  ArrowLeft,
+  CheckCircle,
+  XCircle,
+  RotateCcw,
+  Eye,
+  Loader2,
+  Info,
+  Clock,
+} from "lucide-react";
+import { Application, ApplicationStatusEnum } from "@/types";
 
-type StatusKey = "draft" | "submitted" | "under_review" | "approved" | "rejected";
-
-const statusConfig: Record<StatusKey, { label: string; className: string }> = {
-  draft:        { label: "Draft",        className: "bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-300"           },
-  submitted:    { label: "Submitted",    className: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"           },
-  under_review: { label: "Under Review", className: "bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300"   },
-  approved:     { label: "Approved",     className: "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300"       },
-  rejected:     { label: "Rejected",     className: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300"               },
+const statusConfig: Record<
+  ApplicationStatusEnum,
+  { label: string; className: string }
+> = {
+  draft: {
+    label: "Draft",
+    className: "bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-300",
+  },
+  submitted: {
+    label: "Submitted",
+    className: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+  },
+  under_review: {
+    label: "Under Review",
+    className:
+      "bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300",
+  },
+  approved: {
+    label: "Approved",
+    className:
+      "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300",
+  },
+  rejected: {
+    label: "Rejected",
+    className: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
+  },
+  returned_for_changes: {
+    label: "Returned for Changes",
+    className: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
+  },
 };
 
 const auditDotColor: Record<string, string> = {
-  draft:        "bg-gray-400",
-  submitted:    "bg-blue-500",
+  draft: "bg-gray-400",
+  submitted: "bg-blue-500",
   under_review: "bg-yellow-500",
-  approved:     "bg-green-500",
-  rejected:     "bg-red-500",
+  approved: "bg-green-500",
+  rejected: "bg-red-500",
+  returned_for_changes: "bg-red-500",
 };
 
-function StatusBadge({ status }: { status: string }) {
-  const config = statusConfig[status as StatusKey] ?? { label: status, className: "bg-gray-50 text-gray-700" };
+/**
+ * Renders a status badge.
+ * @param status - The status to render.
+ * @returns The status badge.
+ */
+function StatusBadge({ status }: { status: ApplicationStatusEnum }) {
+  const config = statusConfig[status] ?? {
+    label: status,
+    className: "bg-gray-50 text-gray-700",
+  };
   return <Badge className={config.className}>{config.label}</Badge>;
 }
 
+/**
+ * Returns the initials of a username.
+ * @param username - The username.
+ * @returns The initials of the username.
+ */
 function getInitials(username: string) {
   return username.slice(0, 2).toUpperCase();
 }
 
 type ModalType = "reject" | "return" | null;
 
+/**
+ * Renders the application detail page for reviewers.
+ * @returns The application detail page for reviewers.
+ */
 export default function ReviewerApplicationDetailPage() {
   const { id } = useParams<{ id: string }>();
 
-  const [app, setApp]           = useState<Application | null>(null);
-  const [loading, setLoading]   = useState(true);
-  const [modal, setModal]       = useState<ModalType>(null);
-  const [comment, setComment]   = useState("");
+  const [app, setApp] = useState<Application | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [modal, setModal] = useState<ModalType>(null);
+  const [comment, setComment] = useState("");
   const [commentError, setCommentError] = useState("");
-  const [acting, setActing]     = useState(false);
+  const [acting, setActing] = useState(false);
   const [starting, setStarting] = useState(false);
   const [approving, setApproving] = useState(false);
 
@@ -69,12 +123,18 @@ export default function ReviewerApplicationDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  /**
+   * Closes the modal.
+   */
   const closeModal = () => {
     setModal(null);
     setComment("");
     setCommentError("");
   };
 
+  /**
+   * Handles the start of a review.
+   */
   const handleStartReview = async () => {
     setStarting(true);
     try {
@@ -88,6 +148,9 @@ export default function ReviewerApplicationDetailPage() {
     }
   };
 
+  /**
+   * Handles the approval of an application.
+   */
   const handleApprove = async () => {
     setApproving(true);
     try {
@@ -95,12 +158,17 @@ export default function ReviewerApplicationDetailPage() {
       setApp(updated);
       toast.success("Application approved.");
     } catch (err: any) {
-      toast.error(err?.response?.data?.detail ?? "Failed to approve application.");
+      toast.error(
+        err?.response?.data?.detail ?? "Failed to approve application."
+      );
     } finally {
       setApproving(false);
     }
   };
 
+  /**
+   * Handles the confirmation of a modal.
+   */
   const handleModalConfirm = async () => {
     if (!comment.trim()) {
       setCommentError("A comment is required.");
@@ -108,12 +176,12 @@ export default function ReviewerApplicationDetailPage() {
     }
     setActing(true);
     try {
-      let updated
+      let updated;
       if (modal === "reject") {
-        updated = await rejectApplication(Number(id), comment);
+        updated = await rejectApplication(Number(id), { comment });
         toast.success("Application rejected.");
       } else {
-        updated = await returnForChanges(Number(id), comment);
+        updated = await returnForChanges(Number(id), { comment });
         toast.success("Application returned for changes.");
       }
       setApp(updated);
@@ -141,7 +209,7 @@ export default function ReviewerApplicationDetailPage() {
     );
   }
 
-  const isSubmitted   = app.status === "submitted";
+  const isSubmitted = app.status === "submitted";
   const isUnderReview = app.status === "under_review";
 
   return (
@@ -167,7 +235,9 @@ export default function ReviewerApplicationDetailPage() {
             </div>
             <span>{app.owner.username}</span>
             <span>·</span>
-            <span>Updated {new Date(app.updated_at).toLocaleDateString()}</span>
+            <span>
+              Updated {new Date(app.updated_at).toLocaleDateString()}
+            </span>
           </div>
         </div>
 
@@ -179,10 +249,15 @@ export default function ReviewerApplicationDetailPage() {
               onClick={handleStartReview}
               disabled={starting}
             >
-              {starting
-                ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Starting...</>
-                : <><Eye className="mr-2 h-4 w-4" /> Start Review</>
-              }
+              {starting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Starting...
+                </>
+              ) : (
+                <>
+                  <Eye className="mr-2 h-4 w-4" /> Start Review
+                </>
+              )}
             </Button>
           )}
 
@@ -194,10 +269,15 @@ export default function ReviewerApplicationDetailPage() {
                 onClick={handleApprove}
                 disabled={approving}
               >
-                {approving
-                  ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Approving...</>
-                  : <><CheckCircle className="mr-2 h-4 w-4" /> Approve</>
-                }
+                {approving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Approving...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="mr-2 h-4 w-4" /> Approve
+                  </>
+                )}
               </Button>
               <Button
                 variant="outline"
@@ -206,10 +286,7 @@ export default function ReviewerApplicationDetailPage() {
               >
                 <XCircle className="mr-2 h-4 w-4" /> Reject
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => setModal("return")}
-              >
+              <Button variant="outline" onClick={() => setModal("return")}>
                 <RotateCcw className="mr-2 h-4 w-4" /> Return for changes
               </Button>
             </>
@@ -235,14 +312,18 @@ export default function ReviewerApplicationDetailPage() {
           )}
 
           <div className="rounded-lg border bg-card p-5 space-y-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Details</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Details
+            </p>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Title</p>
               <p className="text-sm">{app.title}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Category</p>
-              <p className="text-sm capitalize">{app.category.replace("_", " ")}</p>
+              <p className="text-sm capitalize">
+                {app.category.replace("_", " ")}
+              </p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Description</p>
@@ -254,15 +335,29 @@ export default function ReviewerApplicationDetailPage() {
         {/* Sidebar */}
         <div className="space-y-5">
           <div className="rounded-lg border bg-card p-5">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-3">Info</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-3">
+              Info
+            </p>
             <div className="space-y-0 divide-y divide-border">
               {[
-                { label: "Status",       value: <StatusBadge status={app.status} />                    },
-                { label: "Owner",        value: app.owner.username                                      },
-                { label: "Created",      value: new Date(app.created_at).toLocaleDateString()           },
-                { label: "Last updated", value: new Date(app.updated_at).toLocaleDateString()           },
+                {
+                  label: "Status",
+                  value: <StatusBadge status={app.status} />,
+                },
+                { label: "Owner", value: app.owner.username },
+                {
+                  label: "Created",
+                  value: new Date(app.created_at).toLocaleDateString(),
+                },
+                {
+                  label: "Last updated",
+                  value: new Date(app.updated_at).toLocaleDateString(),
+                },
               ].map(({ label, value }) => (
-                <div key={label} className="flex items-center justify-between py-2 text-sm">
+                <div
+                  key={label}
+                  className="flex items-center justify-between py-2 text-sm"
+                >
                   <span className="text-muted-foreground">{label}</span>
                   <span className="font-medium">{value}</span>
                 </div>
@@ -271,22 +366,29 @@ export default function ReviewerApplicationDetailPage() {
           </div>
 
           <div className="rounded-lg border bg-card p-5">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-3">Activity</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-3">
+              Activity
+            </p>
             {app.audit_logs.length === 0 ? (
               <p className="text-sm text-muted-foreground">No activity yet.</p>
             ) : (
               <div className="space-y-0 divide-y divide-border">
                 {app.audit_logs.map((log) => (
                   <div key={log.id} className="flex gap-3 py-3">
-                    <div className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${auditDotColor[log.to_status] ?? "bg-gray-400"}`} />
+                    <div
+                      className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${
+                        auditDotColor[log.to_status] ?? "bg-gray-400"
+                      }`}
+                    />
                     <div>
                       <p className="text-sm">
-                        <span className="font-medium">{log.actor.username}</span>
-                        {" "}moved to{" "}
-                        <StatusBadge status={log.to_status} />
+                        <span className="font-medium">{log.actor.username}</span>{" "}
+                        moved to <StatusBadge status={log.to_status} />
                       </p>
                       {log.comment && (
-                        <p className="text-xs text-muted-foreground mt-0.5 italic">&quot;{log.comment}&quot;</p>
+                        <p className="text-xs text-muted-foreground mt-0.5 italic">
+                          &quot;{log.comment}&quot;
+                        </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {new Date(log.created_at).toLocaleString()}
@@ -301,19 +403,25 @@ export default function ReviewerApplicationDetailPage() {
       </div>
 
       {/* Reject / Return modal */}
-      <Dialog open={modal !== null} onOpenChange={(v) => { if (!v) closeModal(); }}>
+      <Dialog
+        open={modal !== null}
+        onOpenChange={(v) => {
+          if (!v) closeModal();
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {modal === "reject" ? "Reject application" : "Return for changes"}
+              {modal === "reject"
+                ? "Reject application"
+                : "Return for changes"}
             </DialogTitle>
           </DialogHeader>
 
           <p className="text-sm text-muted-foreground">
             {modal === "reject"
               ? "Provide a reason. This will be visible to the applicant."
-              : "Explain what the applicant needs to address before resubmitting."
-            }
+              : "Explain what the applicant needs to address before resubmitting."}
           </p>
 
           <div className="space-y-1 py-2">
@@ -345,17 +453,19 @@ export default function ReviewerApplicationDetailPage() {
             <Button
               onClick={handleModalConfirm}
               disabled={acting}
-              className={modal === "reject"
-                ? "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 dark:bg-red-950 dark:text-red-300"
-                : ""
+              className={
+                modal === "reject"
+                  ? "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 dark:bg-red-950 dark:text-red-300"
+                  : ""
               }
               variant={modal === "reject" ? "outline" : "default"}
             >
               {acting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {acting
                 ? "Confirming..."
-                : modal === "reject" ? "Confirm rejection" : "Confirm return"
-              }
+                : modal === "reject"
+                ? "Confirm rejection"
+                : "Confirm return"}
             </Button>
           </DialogFooter>
         </DialogContent>

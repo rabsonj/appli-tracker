@@ -5,10 +5,18 @@ import { columns } from "@/app/(applicant)/applications/columns";
 import { DataTable } from "@/components/data-table";
 import { fetchApplications, createApplication } from "@/lib/api/applications";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,53 +24,77 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { Application } from "@/types";
+import { ApplicationWritePayload, Category } from "@/types";
 
 const STATUSES = [
-  { value: "all",          label: "All"          },
-  { value: "draft",        label: "Draft"        },
-  { value: "submitted",    label: "Submitted"    },
+  { value: "all", label: "All" },
+  { value: "draft", label: "Draft" },
+  { value: "submitted", label: "Submitted" },
   { value: "under_review", label: "Under Review" },
-  { value: "approved",     label: "Approved"     },
-  { value: "rejected",     label: "Rejected"     },
+  { value: "approved", label: "Approved" },
+  { value: "rejected", label: "Rejected" },
 ];
 
-const CATEGORIES = [
-  { value: "general",     label: "General Request" },
-  { value: "budget",      label: "Budget Approval" },
-  { value: "leave",       label: "Leave Request"   },
-  { value: "procurement", label: "Procurement"     },
-  { value: "other",       label: "Other"           },
+const CATEGORIES: { value: Category; label: string }[] = [
+  { value: "general", label: "General Request" },
+  { value: "budget", label: "Budget Approval" },
+  { value: "leave", label: "Leave Request" },
+  { value: "procurement", label: "Procurement" },
+  { value: "other", label: "Other" },
 ];
 
 const PAGE_SIZE = 10;
-const EMPTY_FORM = { title: "", category: "general", description: "" };
+const EMPTY_FORM: ApplicationWritePayload = {
+  title: "",
+  category: "general",
+  description: "",
+};
 
+/**
+ * Renders the applications page.
+ * @returns The applications page.
+ */
 export default function Page() {
-  const [allData, setAllData]       = useState([]);
-  const [status, setStatus]         = useState("all");
-  const [page, setPage]             = useState(1);
-  const [open, setOpen]             = useState(false);
-  const [form, setForm]             = useState(EMPTY_FORM);
-  const [creating, setCreating]     = useState(false);
+  const [allData, setAllData] = useState<Application[]>([]);
+  const [status, setStatus] = useState("all");
+  const [page, setPage] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState<ApplicationWritePayload>(EMPTY_FORM);
+  const [creating, setCreating] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+  /**
+   * Loads the applications.
+   */
   const loadApplications = () => {
     fetchApplications().then(setAllData).catch(console.error);
   };
 
-  useEffect(() => { loadApplications(); }, []);
-  useEffect(() => { setPage(1); }, [status]);
+  useEffect(() => {
+    loadApplications();
+  }, []);
+  useEffect(() => {
+    setPage(1);
+  }, [status]);
 
-  const filtered   = status === "all" ? allData : allData.filter((a) => a.status === status);
+  const filtered =
+    status === "all" ? allData : allData.filter((a) => a.status === status);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
+  /**
+   * Handles the cancellation of the creation of an application.
+   */
   const handleCancel = () => {
     setForm(EMPTY_FORM);
     setFieldErrors({});
     setOpen(false);
   };
 
+  /**
+   * Handles the creation of an application.
+   */
   const handleCreate = async () => {
     setCreating(true);
     setFieldErrors({});
@@ -77,7 +109,9 @@ export default function Page() {
       if (detail && typeof detail === "object") {
         const errors: Record<string, string> = {};
         for (const [field, messages] of Object.entries(detail)) {
-          errors[field] = Array.isArray(messages) ? messages[0] as string : String(messages);
+          errors[field] = Array.isArray(messages)
+            ? (messages[0] as string)
+            : String(messages);
         }
         setFieldErrors(errors);
       } else {
@@ -97,7 +131,9 @@ export default function Page() {
           </SelectTrigger>
           <SelectContent>
             {STATUSES.map((s) => (
-              <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+              <SelectItem key={s.value} value={s.value}>
+                {s.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -129,7 +165,12 @@ export default function Page() {
         </Button>
       </div>
 
-      <Dialog open={open} onOpenChange={(v) => { if (!v) handleCancel(); }}>
+      <Dialog
+        open={open}
+        onOpenChange={(v) => {
+          if (!v) handleCancel();
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Create Application</DialogTitle>
@@ -157,7 +198,7 @@ export default function Page() {
               <Select
                 value={form.category}
                 onValueChange={(v) => {
-                  setForm((f) => ({ ...f, category: v }));
+                  setForm((f) => ({ ...f, category: v as Category }));
                   setFieldErrors((fe) => ({ ...fe, category: "" }));
                 }}
               >
@@ -166,12 +207,16 @@ export default function Page() {
                 </SelectTrigger>
                 <SelectContent>
                   {CATEGORIES.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    <SelectItem key={c.value} value={c.value}>
+                      {c.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {fieldErrors.category && (
-                <p className="text-sm text-destructive">{fieldErrors.category}</p>
+                <p className="text-sm text-destructive">
+                  {fieldErrors.category}
+                </p>
               )}
             </div>
 
@@ -188,7 +233,9 @@ export default function Page() {
                 }}
               />
               {fieldErrors.description && (
-                <p className="text-sm text-destructive">{fieldErrors.description}</p>
+                <p className="text-sm text-destructive">
+                  {fieldErrors.description}
+                </p>
               )}
             </div>
           </div>

@@ -29,6 +29,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 
+/**
+ * Renders a login form.
+ * @param className - The class name for the component.
+ * @param props - The props for the component.
+ * @returns The login form component.
+ */
 export function LoginForm({
   className,
   ...props
@@ -42,6 +48,10 @@ export function LoginForm({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Handles the form submission.
+   * @param e - The form event.
+   */
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 

@@ -3,12 +3,29 @@ import { persist } from "zustand/middleware";
 import Cookies from "js-cookie";
 import { User } from "@/types";
 
+/**
+ * Represents the authentication state of the application.
+ */
 interface AuthState {
+  /** The current user. */
   user: User | null;
+  /** The access token. */
   accessToken: string | null;
+  /** The refresh token. */
   refreshToken: string | null;
+  /**
+   * Sets the authentication state.
+   * @param user - The user to set.
+   * @param accessToken - The access token to set.
+   * @param refreshToken - The refresh token to set.
+   */
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
+  /** Clears the authentication state. */
   clearAuth: () => void;
+  /**
+   * Checks if the user is authenticated.
+   * @returns True if the user is authenticated, false otherwise.
+   */
   isAuthenticated: () => boolean;
 }
 
