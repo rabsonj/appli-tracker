@@ -46,6 +46,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
 class ApplicationWriteSerializer(serializers.ModelSerializer):
     """Write serializer for creating and updating Application instances."""
 
+    audit_logs = AuditLogSerializer(many=True, read_only=True)
+
     class Meta:
         model = application_models.Application
         fields = (
