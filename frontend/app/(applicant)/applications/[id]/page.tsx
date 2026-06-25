@@ -69,7 +69,6 @@ export default function ApplicationDetailPage() {
   }, [id]);
 
   const isDraft = app?.status === "draft";
-  console.log({ app })
 
   const handleChange = (field: string, value: string) => {
     setForm((f) => ({ ...f, [field]: value }));

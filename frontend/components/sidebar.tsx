@@ -15,14 +15,13 @@ import {
 } from "@/components/ui/sidebar"
 import { ListChecks } from "lucide-react"
 
-const navItems = [
-  {
-    title: "My Applications",
-    url: "/applications",
-  },
-]
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  navItems,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
+  navItems?: { title: string; url: string }[];
+}) {
   const pathname = usePathname()
 
   return (
