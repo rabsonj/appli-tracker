@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Application } from "@/types";
+import { Application, ApplicationStatusEnum } from "@/types";
 
 const STATUSES = [
   { value: "all", label: "All" },
@@ -38,9 +38,6 @@ export default function Page() {
   useEffect(() => {
     fetchApplications().then(setAllData).catch(console.error);
   }, []);
-  useEffect(() => {
-    setPage(1);
-  }, [status]);
 
   const filtered =
     status === "all" ? allData : allData.filter((a) => a.status === status);
@@ -53,6 +50,11 @@ export default function Page() {
   ).length;
   const approved = allData.filter((a) => a.status === "approved").length;
   const rejected = allData.filter((a) => a.status === "rejected").length;
+
+  const handleStatusChange = (value: ApplicationStatusEnum) => {
+    setStatus(value);
+    setPage(1);
+  };
 
   return (
     <div className="container mx-auto py-10 space-y-4">
@@ -90,7 +92,10 @@ export default function Page() {
 
       {/* Filter */}
       <div className="flex items-center justify-between">
-        <Select value={status} onValueChange={setStatus}>
+        <Select
+          value={status}
+          onValueChange={handleStatusChange}
+        >
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>

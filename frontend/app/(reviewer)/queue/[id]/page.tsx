@@ -141,8 +141,9 @@ export default function ReviewerApplicationDetailPage() {
       const updated = await startReview(Number(id));
       setApp(updated);
       toast.success("Review started.");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.detail ?? "Failed to start review.");
+    } catch (err: unknown) {
+      const error = err as { response: { data: { detail: string } } }
+      toast.error(error?.response?.data?.detail ?? "Failed to start review.");
     } finally {
       setStarting(false);
     }
@@ -157,9 +158,10 @@ export default function ReviewerApplicationDetailPage() {
       const updated = await approveApplication(Number(id));
       setApp(updated);
       toast.success("Application approved.");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { response: { data: { detail: string } } }
       toast.error(
-        err?.response?.data?.detail ?? "Failed to approve application."
+        error?.response?.data?.detail ?? "Failed to approve application."
       );
     } finally {
       setApproving(false);
@@ -186,8 +188,9 @@ export default function ReviewerApplicationDetailPage() {
       }
       setApp(updated);
       closeModal();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.detail ?? "Action failed.");
+    } catch (err: unknown) {
+      const error = err as { response: { data: { detail: string } } }
+      toast.error(error?.response?.data?.detail ?? "Action failed.");
     } finally {
       setActing(false);
     }

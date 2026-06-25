@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   fetchApplication,
@@ -97,7 +97,6 @@ function StatusBadge({ status }: { status: ApplicationStatusEnum }) {
  */
 export default function ApplicationDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
 
   const [app, setApp] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
@@ -159,8 +158,9 @@ export default function ApplicationDetailPage() {
       setApp(updated);
       setDirty(false);
       toast.success("Changes saved.");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.detail ?? "Failed to save changes.");
+    } catch (err: unknown) {
+      const error = err as { response: { data: { detail: string } } }
+      toast.error(error?.response?.data?.detail ?? "Failed to save changes.");
     } finally {
       setSaving(false);
     }
@@ -175,9 +175,10 @@ export default function ApplicationDetailPage() {
       const updated = await submitApplication(Number(id));
       setApp(updated);
       toast.success("Application submitted successfully.");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { response: { data: { detail: string } } }
       toast.error(
-        err?.response?.data?.detail ?? "Failed to submit application."
+        error?.response?.data?.detail ?? "Failed to submit application."
       );
     } finally {
       setSubmitting(false);
