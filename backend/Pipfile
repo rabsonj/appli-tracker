@@ -11,6 +11,7 @@ django-fsm = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
+drf-spectacular = "*"
 
 [dev-packages]
 pytest = "*"
