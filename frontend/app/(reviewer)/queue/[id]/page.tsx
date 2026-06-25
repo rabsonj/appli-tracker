@@ -33,7 +33,7 @@ import {
   Info,
   Clock,
 } from "lucide-react";
-import { Application, ApplicationStatusEnum } from "@/src/types/api";
+import { Application, ApplicationStatusEnum } from "@/types";
 
 const statusConfig: Record<
   ApplicationStatusEnum,

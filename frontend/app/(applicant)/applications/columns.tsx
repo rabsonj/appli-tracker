@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Application, ApplicationStatusEnum } from "@/src/types/api";
+import { Application, ApplicationStatusEnum } from "@/types";
 import { Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 

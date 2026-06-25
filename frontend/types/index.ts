@@ -1,5 +1,14 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Application, User } from "@/src/types/api";
+import { components } from "@/src/types/api";
+
+export type Application = components["schemas"]["Application"];
+export type ApplicationWrite = components["schemas"]["ApplicationWrite"];
+export type PatchedApplication = components["schemas"]["PatchedApplicationWrite"];
+export type User = components["schemas"]["User"];
+export type AuditLog = components["schemas"]["AuditLog"];
+export type ApplicationStatusEnum = components["schemas"]["StatusEnum"];
+export type ApplicationCategoryEnum = components["schemas"]["CategoryEnum"];
+export type RoleEnum = components["schemas"]["RoleEnum"];
 
 export type Role = "applicant" | "reviewer";
 
@@ -16,15 +25,6 @@ export type Category =
   | "leave"
   | "procurement"
   | "other";
-
-export interface AuditLog {
-  id: number;
-  actor: User;
-  from_status: Status;
-  to_status: Status;
-  comment: string;
-  created_at: string;
-}
 
 export interface ApplicationWritePayload {
   title: string;

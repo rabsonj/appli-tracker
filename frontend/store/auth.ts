@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import Cookies from "js-cookie";
-import { User } from "@/src/types/api";
+import { User } from "@/types";
 
 /**
  * Represents the authentication state of the application.

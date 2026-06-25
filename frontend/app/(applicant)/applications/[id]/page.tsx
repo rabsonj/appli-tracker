@@ -27,7 +27,7 @@ import {
   ApplicationCategoryEnum,
   ApplicationStatusEnum,
   PatchedApplication,
-} from "@/src/types/api";
+} from "@/types";
 
 const CATEGORIES: { value: ApplicationCategoryEnum; label: string }[] = [
   { value: "general", label: "General Request" },

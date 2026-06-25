@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Application } from "@/src/types/api";
+import { Application } from "@/types";
 
 const STATUSES = [
   { value: "all", label: "All" },

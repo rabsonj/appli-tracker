@@ -24,7 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { Application } from "@/src/types/api";
+import { Application } from "@/types";
 import { ApplicationWritePayload, Category } from "@/types";
 
 const STATUSES = [
