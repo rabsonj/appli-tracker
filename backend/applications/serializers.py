@@ -48,7 +48,26 @@ class ApplicationWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = application_models.Application
-        fields = ("title", "category", "description", "amount")
+        fields = (
+            "id",
+            "owner",
+            "title",
+            "category",
+            "description",
+            "amount",
+            "status",
+            "created_at",
+            "updated_at",
+            "audit_logs",
+        )
+        read_only_fields = (
+            "id",
+            "owner",
+            "status",
+            "created_at",
+            "updated_at",
+            "audit_logs",
+        )
 
     def validate_category(self, value: str) -> str:
         """Ensures the provided category is a valid choice.

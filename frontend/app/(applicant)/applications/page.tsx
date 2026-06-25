@@ -3,15 +3,19 @@
 import { useEffect, useState } from "react";
 import { columns } from "@/app/(applicant)/applications/columns";
 import { DataTable } from "@/components/data-table";
-import { fetchApplications } from "@/lib/api/applications";
+import { fetchApplications, createApplication } from "@/lib/api/applications";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const STATUSES = [
   { value: "all",          label: "All"          },
@@ -22,45 +26,83 @@ const STATUSES = [
   { value: "rejected",     label: "Rejected"     },
 ];
 
+const CATEGORIES = [
+  { value: "general",     label: "General Request" },
+  { value: "budget",      label: "Budget Approval" },
+  { value: "leave",       label: "Leave Request"   },
+  { value: "procurement", label: "Procurement"     },
+  { value: "other",       label: "Other"           },
+];
+
 const PAGE_SIZE = 10;
+const EMPTY_FORM = { title: "", category: "general", description: "" };
 
 export default function Page() {
-  const [allData, setAllData]     = useState([]);
-  const [status, setStatus]       = useState("all");
-  const [page, setPage]           = useState(1);
+  const [allData, setAllData]       = useState([]);
+  const [status, setStatus]         = useState("all");
+  const [page, setPage]             = useState(1);
+  const [open, setOpen]             = useState(false);
+  const [form, setForm]             = useState(EMPTY_FORM);
+  const [creating, setCreating]     = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    fetchApplications().then((data) => {
-      setAllData(data);
-    }).catch(console.error);
-  }, []);
+  const loadApplications = () => {
+    fetchApplications().then(setAllData).catch(console.error);
+  };
 
-  const filtered = status === "all"
-    ? allData
-    : allData.filter((a) => a.status === status);
+  useEffect(() => { loadApplications(); }, []);
+  useEffect(() => { setPage(1); }, [status]);
 
+  const filtered   = status === "all" ? allData : allData.filter((a) => a.status === status);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  // Reset to page 1 when filter changes
-  useEffect(() => { setPage(1); }, [status]);
+  const handleCancel = () => {
+    setForm(EMPTY_FORM);
+    setFieldErrors({});
+    setOpen(false);
+  };
+
+  const handleCreate = async () => {
+    setCreating(true);
+    setFieldErrors({});
+    try {
+      await createApplication(form);
+      toast.success("Application created successfully.");
+      setForm(EMPTY_FORM);
+      setOpen(false);
+      loadApplications();
+    } catch (err: any) {
+      const detail = err?.response?.data?.detail;
+      if (detail && typeof detail === "object") {
+        const errors: Record<string, string> = {};
+        for (const [field, messages] of Object.entries(detail)) {
+          errors[field] = Array.isArray(messages) ? messages[0] as string : String(messages);
+        }
+        setFieldErrors(errors);
+      } else {
+        toast.error(detail ?? "Failed to create application.");
+      }
+    } finally {
+      setCreating(false);
+    }
+  };
 
   return (
     <div className="container mx-auto py-10 space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Applications</h1>
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
             {STATUSES.map((s) => (
-              <SelectItem key={s.value} value={s.value}>
-                {s.label}
-              </SelectItem>
+              <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
+
+        <Button onClick={() => setOpen(true)}>Create Application</Button>
       </div>
 
       <DataTable columns={columns} data={paginated} />
@@ -86,6 +128,82 @@ export default function Page() {
           Next
         </Button>
       </div>
+
+      <Dialog open={open} onOpenChange={(v) => { if (!v) handleCancel(); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create Application</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div className="space-y-1">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                placeholder="Enter a title"
+                value={form.title}
+                onChange={(e) => {
+                  setForm((f) => ({ ...f, title: e.target.value }));
+                  setFieldErrors((fe) => ({ ...fe, title: "" }));
+                }}
+              />
+              {fieldErrors.title && (
+                <p className="text-sm text-destructive">{fieldErrors.title}</p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="category">Category</Label>
+              <Select
+                value={form.category}
+                onValueChange={(v) => {
+                  setForm((f) => ({ ...f, category: v }));
+                  setFieldErrors((fe) => ({ ...fe, category: "" }));
+                }}
+              >
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((c) => (
+                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {fieldErrors.category && (
+                <p className="text-sm text-destructive">{fieldErrors.category}</p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Describe your application"
+                rows={4}
+                value={form.description}
+                onChange={(e) => {
+                  setForm((f) => ({ ...f, description: e.target.value }));
+                  setFieldErrors((fe) => ({ ...fe, description: "" }));
+                }}
+              />
+              {fieldErrors.description && (
+                <p className="text-sm text-destructive">{fieldErrors.description}</p>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={handleCancel} disabled={creating}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreate} disabled={creating}>
+              {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {creating ? "Creating..." : "Create Application"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
