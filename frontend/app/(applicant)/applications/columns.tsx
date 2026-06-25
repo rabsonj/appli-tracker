@@ -4,8 +4,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Application, ApplicationStatusEnum } from "@/types";
-import { Eye, Pencil } from "lucide-react";
+import { Eye } from "lucide-react";
 import Link from "next/link";
+import { formatAmount } from '@/utils/application'
 
 const statusConfig: Record<
   ApplicationStatusEnum,
@@ -56,6 +57,17 @@ export const columns: ColumnDef<Application>[] = [
     },
   },
   {
+    accessorKey: "amount",
+    header: "Amount (ZMW)",
+    cell: ({ row }) => {
+      return (
+        <span>
+          {formatAmount(row.getValue("amount"))}
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
@@ -94,13 +106,6 @@ export const columns: ColumnDef<Application>[] = [
               <Eye className="h-4 w-4" />
             </Link>
           </Button>
-          {app.status === "draft" && (
-            <Button variant="ghost" size="icon" asChild>
-              <Link href={`/applications/${app.id}/edit`}>
-                <Pencil className="h-4 w-4" />
-              </Link>
-            </Button>
-          )}
         </div>
       );
     },

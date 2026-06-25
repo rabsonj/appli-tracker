@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Application, ApplicationStatusEnum } from "@/types";
+import ApplicationsStats from "@/components/applications/stats";
 
 const STATUSES = [
   { value: "all", label: "All" },
@@ -44,13 +45,6 @@ export default function Page() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const submitted = allData.filter((a) => a.status === "submitted").length;
-  const underReview = allData.filter(
-    (a) => a.status === "under_review"
-  ).length;
-  const approved = allData.filter((a) => a.status === "approved").length;
-  const rejected = allData.filter((a) => a.status === "rejected").length;
-
   const handleStatusChange = (value: ApplicationStatusEnum) => {
     setStatus(value);
     setPage(1);
@@ -58,37 +52,7 @@ export default function Page() {
 
   return (
     <div className="container mx-auto py-10 space-y-4">
-      {/* Stats */}
-      <div className="grid grid-cols-5 gap-3">
-        {[
-          { label: "Total", value: allData.length, className: "" },
-          {
-            label: "Submitted",
-            value: submitted,
-            className: "text-blue-600",
-          },
-          {
-            label: "Under Review",
-            value: underReview,
-            className: "text-yellow-600",
-          },
-          {
-            label: "Approved",
-            value: approved,
-            className: "text-green-600",
-          },
-          {
-            label: "Rejected",
-            value: rejected,
-            className: "text-red-600",
-          },
-        ].map(({ label, value, className }) => (
-          <div key={label} className="rounded-md bg-muted/50 px-4 py-3">
-            <p className="text-xs text-muted-foreground mb-1">{label}</p>
-            <p className={`text-xl font-medium ${className}`}>{value}</p>
-          </div>
-        ))}
-      </div>
+      <ApplicationsStats applications={allData} />
 
       {/* Filter */}
       <div className="flex items-center justify-between">

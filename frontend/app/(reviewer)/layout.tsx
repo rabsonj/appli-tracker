@@ -18,6 +18,7 @@ export default function RootLayout({
           url: "/queue",
         },
       ]}
+      navDescription="Review and Manage Applications"
       breadcrumb="Applications"
     >
       {children}
