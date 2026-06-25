@@ -1,12 +1,16 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { components } from "@/src/types/api";
 
+enum ReturnForChangesEnum {
+  ReturnForChanges = "returned_for_changes"
+}
+
 export type Application = components["schemas"]["Application"];
 export type ApplicationWrite = components["schemas"]["ApplicationWrite"];
 export type PatchedApplication = components["schemas"]["PatchedApplicationWrite"];
 export type User = components["schemas"]["User"];
 export type AuditLog = components["schemas"]["AuditLog"];
-export type ApplicationStatusEnum = components["schemas"]["StatusEnum"];
+export type ApplicationStatusEnum = components["schemas"]["StatusEnum"] | ReturnForChangesEnum;
 export type ApplicationCategoryEnum = components["schemas"]["CategoryEnum"];
 export type RoleEnum = components["schemas"]["RoleEnum"];
 
