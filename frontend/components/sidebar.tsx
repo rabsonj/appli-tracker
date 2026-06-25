@@ -11,9 +11,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarHeader
+  SidebarHeader,
+  SidebarFooter
 } from "@/components/ui/sidebar"
 import { ListChecks } from "lucide-react"
+import { NavUser } from '@/components/nav-user'
+import { useAuthStore } from "@/store/auth";
 
 
 export function AppSidebar({
@@ -23,6 +26,7 @@ export function AppSidebar({
   navItems?: { title: string; url: string }[];
 }) {
   const pathname = usePathname()
+  const user = useAuthStore((state) => state.user)
 
   return (
     <Sidebar {...props}>
@@ -52,6 +56,9 @@ export function AppSidebar({
           })}
         </SidebarMenu>
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

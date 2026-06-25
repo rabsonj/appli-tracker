@@ -13,6 +13,10 @@ export function middleware(request: NextRequest): NextResponse {
   const token = request.cookies.get("access_token")?.value;
   const role = request.cookies.get("user_role")?.value;
 
+  if (!token && pathname !== "/login") {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   if (pathname === "/login" && token) {
     return NextResponse.redirect(
       new URL(role === "reviewer" ? "/queue" : "/applications", request.url)

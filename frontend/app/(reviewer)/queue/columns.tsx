@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Application, ApplicationStatusEnum } from "@/types";
 import { Eye } from "lucide-react";
 import Link from "next/link";
+import { getInitials } from "@/utils/user";
 
 const statusConfig: Record<
   ApplicationStatusEnum,
@@ -40,15 +41,6 @@ const statusConfig: Record<
 };
 
 /**
- * Returns the initials of a username.
- * @param username - The username.
- * @returns The initials of the username.
- */
-function getInitials(username: string) {
-  return username.slice(0, 2).toUpperCase();
-}
-
-/**
  * The columns for the applications queue data table.
  */
 export const columns: ColumnDef<Application>[] = [
@@ -60,7 +52,7 @@ export const columns: ColumnDef<Application>[] = [
       return (
         <div className="flex items-center gap-2">
           <div className="h-7 w-7 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 flex items-center justify-center text-xs font-medium shrink-0">
-            {getInitials(username)}
+            {getInitials(row.original.owner)}
           </div>
           <span className="text-sm">{username}</span>
         </div>

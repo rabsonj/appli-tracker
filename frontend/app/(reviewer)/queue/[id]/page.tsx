@@ -1,4 +1,3 @@
-// app/(reviewer)/queue/[id]/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -34,6 +33,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Application, ApplicationStatusEnum } from "@/types";
+import { getInitials } from "@/utils/user";
 
 const statusConfig: Record<
   ApplicationStatusEnum,
@@ -87,15 +87,6 @@ function StatusBadge({ status }: { status: ApplicationStatusEnum }) {
     className: "bg-gray-50 text-gray-700",
   };
   return <Badge className={config.className}>{config.label}</Badge>;
-}
-
-/**
- * Returns the initials of a username.
- * @param username - The username.
- * @returns The initials of the username.
- */
-function getInitials(username: string) {
-  return username.slice(0, 2).toUpperCase();
 }
 
 type ModalType = "reject" | "return" | null;
@@ -234,7 +225,7 @@ export default function ReviewerApplicationDetailPage() {
             <StatusBadge status={app.status} />
             <span>·</span>
             <div className="h-5 w-5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 flex items-center justify-center text-[10px] font-medium">
-              {getInitials(app.owner.username)}
+              {getInitials(app.owner)}
             </div>
             <span>{app.owner.username}</span>
             <span>·</span>
