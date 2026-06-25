@@ -1,7 +1,32 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
 
 [packages]
-gunicorn = "*"
-whitenoise = "*"
-psycopg = {extras = ["pool", "binary"], version = "*"}
+django = "==6.0.6"
+djangorestframework = "==3.17.1"
+django-cors-headers = "==4.9.0"
+djangorestframework-simplejwt = "==5.5.1"
+drf-spectacular = "==0.29.0"
+django-fsm = "==3.0.1"
+dj-database-url = "==3.1.2"
+
+gunicorn = "==26.0.0"
+whitenoise = "==6.12.0"
+
+psycopg = {extras = ["binary", "pool"], version = "==3.3.4"}
+
+python-dotenv = "==1.2.2"
 
 [dev-packages]
+pytest = "==9.1.1"
+pytest-django = "==4.12.0"
+pytest-cov = "==7.1.0"
+factory-boy = "==3.3.3"
+Faker = "==40.23.0"
+coverage = "==7.14.3"
+ruff = "==0.15.19"
+
+[requires]
+python_version = "3.14"
