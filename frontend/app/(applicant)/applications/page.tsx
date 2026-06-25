@@ -24,7 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { Application } from "@/types";
+import { Application, ApplicationStatusEnum } from "@/types";
 import { ApplicationWritePayload, Category } from "@/types";
 
 const STATUSES = [
@@ -74,9 +74,6 @@ export default function Page() {
   useEffect(() => {
     loadApplications();
   }, []);
-  useEffect(() => {
-    setPage(1);
-  }, [status]);
 
   const filtered =
     status === "all" ? allData : allData.filter((a) => a.status === status);
@@ -92,6 +89,11 @@ export default function Page() {
     setOpen(false);
   };
 
+  const handleStatusChange = (value: ApplicationStatusEnum) => {
+    setStatus(value);
+    setPage(1);
+  };
+
   /**
    * Handles the creation of an application.
    */
@@ -104,8 +106,8 @@ export default function Page() {
       setForm(EMPTY_FORM);
       setOpen(false);
       loadApplications();
-    } catch (err: any) {
-      const detail = err?.response?.data?.detail;
+    } catch (err: unknown) {
+      const detail = (err as { response: { data: { detail: string } } })?.response?.data?.detail;
       if (detail && typeof detail === "object") {
         const errors: Record<string, string> = {};
         for (const [field, messages] of Object.entries(detail)) {
@@ -125,7 +127,10 @@ export default function Page() {
   return (
     <div className="container mx-auto py-10 space-y-4">
       <div className="flex items-center justify-between">
-        <Select value={status} onValueChange={setStatus}>
+        <Select
+          value={status}
+          onValueChange={handleStatusChange}
+        >
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
