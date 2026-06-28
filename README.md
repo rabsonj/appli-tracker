@@ -146,16 +146,16 @@ You can use the following credentials to test the application:
 
 #### Applicant Accounts
 **Applicant 1:**
-    -   **Username:** `natasha`
-    -   **Password:** `natasha123`
+-   **Username:** `natasha`
+-   **Password:** `natasha123`
 **Applicant 2:**
-    -   **Username:** `alexsmith`
-    -   **Password:** `applicant123`
+-   **Username:** `alexsmith`
+-   **Password:** `applicant123`
 
 #### Reviewer Account
 **Reviewer:**
-    -   **Username:** `jojo`
-    -   **Password:** `reviewer123`
+-   **Username:** `jojo`
+-   **Password:** `reviewer123`
 
 ## Data Model and Key Design Decisions
 
@@ -189,12 +189,14 @@ The application revolves around three core models:
 -   **Atomic Transitions:** The `_do_transition` helper method in `ApplicationViewSet` ensures that state changes and audit log creation are performed atomically within a database transaction, preventing data inconsistencies. Row-level locking (`select_for_update`) is used to prevent race conditions during concurrent updates.
 -   **Separate Read/Write Serializers:** `ApplicationSerializer` (read-only, nested data) and `ApplicationWriteSerializer` (for create/update) are used to optimize data transfer and validation.
 -   **Seed Script:** A `seed` management command is provided to populate the database with initial users (2 Applicants and 1 Reviewer), facilitating quick setup and testing.
+-   **`drf-spectacular` and `openapi-typescript` (frontend):** Used to generate TypeScript types from the backend models and APIs.
 
 #### Frontend
 -   **Next.js for React Application:** Provides server-side rendering, routing, and API routes (though not heavily used for this project's API interaction).
 -   **Custom Hooks for Data Management:** The `useApplications` hook centralizes data fetching, filtering, and pagination logic for application lists, promoting reusability and cleaner component code.
 -   **Shadcn UI & Tailwind CSS:** Used for building a modern and responsive user interface with a focus on accessibility and design consistency.
 -   **Dynamic Column Generation:** The `getColumns` function dynamically generates table columns based on the user's role, tailoring the view for Applicants and Reviewers.
+-   **Husky, ESLint, and Prettier:** Configured ESLint for linting, Prettier for code formatting, and Husky (for pre-commit hooks) to automatically lint and format files on commit.
 
 ## Trade-offs and Future Improvements
 
@@ -236,10 +238,39 @@ Gemini was used in the following ways:
 
 ### Verification of AI-generated code/text
 Every piece of AI-generated code and every suggestion was thoroughly reviewed, understood, and integrated manually. This included:
-    -   Verifying the correctness and logic of generated code snippets.
-    -   Ensuring that refactored code maintained existing functionality and introduced no regressions.
-    -   Confirming that documentation accurately reflected the codebase and project requirements.
-    -   Testing all changes locally to ensure proper functionality and error handling.
+-   Verifying the correctness and logic of generated code snippets.
+-   Ensuring that refactored code maintained existing functionality and introduced no regressions.
+-   Confirming that documentation accurately reflected the codebase and project requirements.
+-   Testing all changes locally to ensure proper functionality and error handling.
+
+## Examples / Demos
+
+Here are some visual examples and demonstrations of the Appli-Tracker application.
+
+### Screenshots
+
+#### Login Page
+![Login Page](media/images/login.png)
+
+#### Applications List (Applicant View)
+![Applications List](media/images/applications.png)
+
+#### Application Details Page
+![Application Details](media/images/application-details.png)
+
+### Videos
+
+#### Application Creation (Video)
+A short video demonstrating the process of creating a new application.
+[Watch Video](media/videos/application-creation.webm)
+
+#### Applicant Workflow (Video)
+A demonstration of the applicant's journey, from creating to submitting an application.
+[Watch Video](media/videos/applicant.webm)
+
+#### Reviewer Workflow (Video)
+A demonstration of the reviewer's process, including reviewing, approving, and rejecting applications.
+[Watch Video](media/videos/reviewer.webm)
 
 ## Conclusion
 

@@ -6,6 +6,8 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+import { ApplicationDetailSkeleton } from '@/components/application-detail-skeleton';
+import { ApplicationNotFound } from '@/components/application-not-found';
 import { ActivitySection } from '@/components/applications/activity-section';
 import { InfoSection } from '@/components/applications/info-section';
 import { StatusBadge } from '@/components/status-badge';
@@ -108,7 +110,6 @@ export default function ApplicationDetailPage() {
       setFieldErrors({});
     } catch (err: unknown) {
       const detail = (err as { response: { data: { detail: string } } })?.response?.data?.detail;
-
       if (detail && typeof detail === 'object') {
         const errors: Record<string, string> = {};
         for (const [field, messages] of Object.entries(detail)) {
@@ -140,20 +141,12 @@ export default function ApplicationDetailPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-      </div>
-    );
+  if (loading === true) {
+    return <ApplicationDetailSkeleton />;
   }
 
   if (!app) {
-    return (
-      <div className="container mx-auto py-10">
-        <p className="text-muted-foreground">Application not found.</p>
-      </div>
-    );
+    return <ApplicationNotFound backLink="/applications" backLinkText="My Applications" />;
   }
 
   return (
