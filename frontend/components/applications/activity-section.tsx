@@ -42,6 +42,7 @@ export function ActivitySection({ app }: ActivitySectionProps) {
             return (
               <div key={log.id} className="flex gap-3 py-3">
                 <div
+                  aria-hidden="true"
                   className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${
                     AUDIT_DOT_COLOR[log.to_status] ?? 'bg-gray-400'
                   }`}
@@ -66,14 +67,19 @@ export function ActivitySection({ app }: ActivitySectionProps) {
                   </div>
                   {log.comment && (
                     <div className="pb-6">
-                      <Bubble className="mt-2" variant="muted">
+                      <Bubble className="mt-2 !max-w-[100%]" variant="muted">
                         <BubbleContent>
                           <span className="text-sm italic">&quot;{log.comment}&quot;</span>
                         </BubbleContent>
-                        <BubbleReactions align="start" role="img">
+                        <BubbleReactions align="start">
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button className="p-1" size="icon-xs" variant="ghost">
+                              <Button
+                                aria-label={`View details for ${log.actor.first_name} ${log.actor.last_name}`}
+                                className="p-1"
+                                size="icon-xs"
+                                variant="ghost"
+                              >
                                 {getInitials(log.actor)}
                               </Button>
                             </TooltipTrigger>

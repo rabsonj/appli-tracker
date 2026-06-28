@@ -1,3 +1,5 @@
+import { CheckCircle2, FilePenLine, GanttChart, Send, Undo2, XCircle } from 'lucide-react';
+
 import { ApplicationStatusEnum } from '@/types';
 
 export const AUDIT_DOT_COLOR: Record<string, string> = {
@@ -9,29 +11,38 @@ export const AUDIT_DOT_COLOR: Record<string, string> = {
   returned_for_changes: 'bg-red-500',
 };
 
-export const STATUS_CONFIG: Record<ApplicationStatusEnum, { label: string; className: string }> = {
+export const STATUS_CONFIG: Record<
+  ApplicationStatusEnum,
+  { label: string; className: string; icon: React.ElementType }
+> = {
   draft: {
     label: 'Draft',
     className: 'bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-300',
+    icon: FilePenLine,
   },
   submitted: {
     label: 'Submitted',
     className: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
+    icon: Send,
   },
   under_review: {
     label: 'Under Review',
     className: 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300',
+    icon: GanttChart,
   },
   approved: {
     label: 'Approved',
     className: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300',
+    icon: CheckCircle2,
   },
   rejected: {
     label: 'Rejected',
     className: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300',
+    icon: XCircle,
   },
   returned_for_changes: {
-    label: 'Returned for Changes',
+    label: 'Changes Requested',
     className: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300',
+    icon: Undo2,
   },
 };
