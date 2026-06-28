@@ -3,3 +3,4 @@ node_modules
 out
 build
 components/ui
+src/types/api.ts
