@@ -20,8 +20,15 @@
    - [API & Permissions](#37-api--permissions)
    - [Testing](#38-testing)
    - [Common Mistakes](#39-common-mistakes)
-4. [Git Conventions](#4-git-conventions)
-5. [Deployment](#5-deployment)
+4. [Frontend](#4-frontend)
+    - [Stack](#41-stack)
+    - [Setup](#42-setup)
+    - [Environment Variables](#43-environment-variables)
+    - [Architecture](#44-architecture)
+    - [Code Style](#45-code-style)
+    - [API & State Management](#46-api--state-management)
+5. [Git Conventions](#5-git-conventions)
+6. [Deployment](#6-deployment)
 
 ---
 
@@ -41,8 +48,7 @@ no client can bypass it.
 - Backend: Django 5 + Django REST Framework + django-fsm
 - Database: PostgreSQL
 - Auth: JWT via `djangorestframework-simplejwt`
-- Frontend: React + TypeScript *(documented separately — see frontend section
-  when added)*
+- Frontend: Next.js (App Router) + TypeScript + Tailwind CSS
 - Hosting: Railway (backend + DB), Vercel (frontend)
 
 ---
@@ -56,37 +62,34 @@ appli-tracker/
 ├── backend/
 │   ├── manage.py
 │   ├── Pipfile
-│   ├── Pipfile.lock
-│   ├── pytest.ini
-│   ├── conftest.py            # Shared pytest fixtures
-│   ├── .env                   # Local dev secrets — never committed
-│   ├── .env.example           # Committed — keys with no values
-│   ├── config/                # Django project folder
-│   │   ├── settings.py
-│   │   ├── urls.py
-│   │   ├── wsgi.py
-│   │   └── asgi.py
-│   ├── users/                 # Custom user model + JWT auth
-│   │   ├── models.py
-│   │   ├── serializers.py
-│   │   ├── views.py
-│   │   ├── urls.py
-│   │   ├── admin.py
-│   │   └── tests/
-│   ├── applications/          # Core domain — Application + AuditLog + FSM
-│   │   ├── models.py
-│   │   ├── serializers.py
-│   │   ├── views.py
-│   │   ├── urls.py
-│   │   ├── permissions.py
-│   │   ├── admin.py
-│   │   └── tests/
-│   │       ├── test_state_machine.py
-│   │       └── test_api.py
-│   └── common/                # Shared utilities
-│       ├── permissions.py     # IsApplicant, IsReviewer
-│       └── exceptions.py      # Custom DRF exception handler
-└── frontend/                  # React + TypeScript (documented separately)
+│   ├── config/
+│   ├── users/
+│   ├── applications/
+│   └── common/
+└── frontend/
+    ├── app/
+    │   ├── (applicant)/
+    │   ├── (auth)/
+    │   ├── (reviewer)/
+    │   ├── layout.tsx
+    │   └── page.tsx
+    ├── components/
+    │   ├── ui/                  # Shadcn UI components
+    │   ├── applications/
+    │   └── auth/
+    ├── constants/
+    ├── hooks/
+    ├── lib/
+    │   ├── api/
+    │   ├── axios.ts
+    │   └── utils.ts
+    ├── src/
+    │   └── types/
+    │       └── api.ts           # Auto-generated API types
+    ├── store/
+    │   └── auth.ts              # Zustand auth store
+    ├── package.json
+    └── next.config.ts
 ```
 
 ---
@@ -162,7 +165,7 @@ User.objects.create_user(
 | `POSTGRES_PASSWORD` | DB password | `yourpassword` |
 | `POSTGRES_HOST` | DB host | `localhost` |
 | `POSTGRES_PORT` | DB port | `5432` |
-| `CORS_ALLOWED_ORIGINS` | Comma-separated frontend origins | `http://localhost:5173` |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated frontend origins | `http://localhost:3000` |
 
 **Database resolution order in `config/settings.py`:**
 
@@ -525,7 +528,86 @@ Always catch `TransitionNotAllowed` specifically, not `Exception`.
 
 ---
 
-## 4. Git Conventions
+## 4. Frontend
+
+### 4.1 Stack
+
+- **Framework**: Next.js 16+ (App Router)
+- **Language**: TypeScript
+- **UI**: React 19+
+- **Styling**: Tailwind CSS with PostCSS
+- **Component Library**: Shadcn/UI
+- **State Management**: Zustand
+- **API Communication**: Axios
+- **Form Management**: React Hook Form (implied by `use-create-application-form.ts`)
+- **Tables**: TanStack Table
+- **Linting**: ESLint
+- **Package Manager**: pnpm
+
+### 4.2 Setup
+
+All frontend commands run from `frontend/`:
+
+```bash
+cd frontend
+
+# Install dependencies
+pnpm install
+
+# Copy env file and fill in values
+cp .env.example .env
+
+# Run the development server
+pnpm dev
+```
+
+The app will be available at `http://localhost:3000`.
+
+### 4.3 Environment Variables
+
+`.env.local` lives at `frontend/.env.local`. Never commit it.
+`.env.example` is committed — always keep it in sync.
+
+| Variable | Description | Example |
+|---|---|---|
+| `NEXT_PUBLIC_API_BASE_URL` | Base URL for the Django backend API | `http://localhost:8000` |
+
+### 4.4 Architecture
+
+The frontend is built with Next.js using the **App Router**.
+
+- **`app/`**: Contains all routes.
+  - **Route Groups**: `(applicant)`, `(auth)`, and `(reviewer)` are used to group routes by role without affecting the URL structure. Each group has its own `layout.tsx` to provide role-specific UI shells.
+  - **`layout.tsx`**: The root layout in `app/layout.tsx` wraps all pages.
+  - **`page.tsx`**: The entry point for a given route.
+- **`components/`**: Reusable React components.
+  - **`ui/`**: Core, unstyled components from Shadcn/UI.
+  - **`applications/` & `auth/`**: Domain-specific components.
+- **`hooks/`**: Custom React hooks for component logic (e.g., `use-applications`).
+- **`lib/`**: Utility functions and API communication.
+  - **`axios.ts`**: Configures the global Axios instance with interceptors for attaching JWTs and handling 401 errors.
+  - **`api/`**: Contains functions that use the Axios instance to make specific API calls.
+- **`store/`**: Global state management with Zustand.
+  - **`auth.ts`**: Manages user authentication state, including the user object and JWTs. It persists state to `localStorage` and also syncs the access token to cookies.
+- **`src/types/api.ts`**: Contains TypeScript types automatically generated from the backend's OpenAPI schema. **Do not edit this file manually.**
+
+### 4.5 Code Style
+
+The project uses **ESLint** with the recommended `eslint-config-next` configuration.
+
+- Run `pnpm lint` to check for issues.
+- Adhere to the default Next.js and TypeScript best practices.
+
+### 4.6 API & State Management
+
+- **API Type Safety**: The `pnpm generate-types` command uses `openapi-typescript` to generate TypeScript interfaces from the backend's OpenAPI schema. This ensures that frontend API calls are type-safe. Run this command whenever the backend API changes.
+- **API Calls**: All API calls are made through the configured Axios client in `lib/axios.ts`. This client automatically handles adding the `Authorization` header.
+- **Global State**: The `useAuthStore` Zustand store (`store/auth.ts`) is the single source of truth for authentication state.
+- **Server State**: For data fetching, the app uses custom hooks like `use-applications`, which likely wrap a library like SWR or TanStack Query under the hood (or a simple `useEffect`).
+
+---
+
+## 5. Git Conventions
 
 **Branch naming:**
 ```
@@ -546,15 +628,15 @@ test: add state machine unit tests with pytest fixtures
 ```
 
 **Before opening a PR:**
-- [ ] `pytest` passes with no failures
-- [ ] `python manage.py check` returns no issues
+- [ ] `pytest` passes with no failures (backend)
+- [ ] `pnpm lint` passes with no issues (frontend)
+- [ ] `python manage.py check` returns no issues (backend)
 - [ ] `.env.example` is updated if new env vars were added
-- [ ] Format files with `pipenv run pytest --cov=. --cov-report=term-missing -v`
-- [ ] Migration files are included if models changed
+- [ ] Migration files are included if models changed (backend)
 
 ---
 
-## 5. Deployment
+## 6. Deployment
 
 **Production stack:**
 
@@ -562,9 +644,9 @@ test: add state machine unit tests with pytest fixtures
 |---|---|
 | Django API | Railway |
 | PostgreSQL | Railway (same project, internal networking) |
-| React Frontend | Vercel *(documented separately)* |
+| Next.js Frontend | Vercel |
 
-**Railway setup:**
+**Railway setup (Backend):**
 
 Set the following environment variables in the Railway dashboard:
 
@@ -584,6 +666,16 @@ is linked to the service — no manual setup needed.
 python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2
 ```
 
+**Vercel setup (Frontend):**
+
+Set the following environment variable in the Vercel project settings:
+
+```
+NEXT_PUBLIC_API_BASE_URL=https://<your-railway-domain>.up.railway.app
+```
+
+Vercel will automatically detect the Next.js project and build/deploy it.
+
 ---
 
-*Last updated: 2026-06-24*
+*Last updated: 2026-06-28*
