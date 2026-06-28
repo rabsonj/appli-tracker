@@ -47,13 +47,21 @@ export const columns: ColumnDef<Application>[] = [
   {
     accessorKey: "title",
     header: "Title",
+    cell: ({ row }) => {
+      const title: string = row.getValue("title") ?? "";
+      return <span>
+          {title.length > 40 ? title.slice(0, 40) + "…" : title}
+        </span>
+    },
   },
   {
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => {
       const desc: string = row.getValue("description") ?? "";
-      return <span>{desc.length > 100 ? desc.slice(0, 100) + "…" : desc}</span>;
+      return <span>
+          {desc.length > 40 ? desc.slice(0, 40) + "…" : desc}
+        </span>
     },
   },
   {

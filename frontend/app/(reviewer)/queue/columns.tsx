@@ -62,6 +62,12 @@ export const columns: ColumnDef<Application>[] = [
   {
     accessorKey: "title",
     header: "Title",
+    cell: ({ row }) => {
+      const title: string = row.getValue("title") ?? "";
+      return <span>
+          {title.length > 40 ? title.slice(0, 40) + "…" : title}
+        </span>
+    },
   },
   {
     accessorKey: "description",
@@ -69,8 +75,8 @@ export const columns: ColumnDef<Application>[] = [
     cell: ({ row }) => {
       const desc: string = row.getValue("description") ?? "";
       return (
-        <span className="text-muted-foreground">
-          {desc.length > 60 ? desc.slice(0, 60) + "…" : desc}
+        <span>
+          {desc.length > 40 ? desc.slice(0, 40) + "…" : desc}
         </span>
       );
     },
