@@ -2,6 +2,7 @@
 
 import { StatusBadge } from '@/components/status-badge';
 import { Application } from '@/types';
+import { isReturnedForChanges } from '@/utils/application';
 
 interface InfoSectionProps {
   app: Application;
@@ -15,7 +16,11 @@ export function InfoSection({ app }: InfoSectionProps) {
         {[
           {
             label: 'Status',
-            value: <StatusBadge status={app.status} />,
+            value: (
+              <StatusBadge
+                status={isReturnedForChanges(app) === true ? 'returned_for_changes' : app.status}
+              />
+            ),
           },
           { label: 'Owner', value: app.owner.email },
           {

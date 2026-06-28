@@ -22,7 +22,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { fetchApplication, submitApplication, updateApplication } from '@/lib/api/applications';
 import { Application, ApplicationCategoryEnum, PatchedApplication } from '@/types';
-import { formatAmount } from '@/utils/application';
+import { formatAmount, isReturnedForChanges } from '@/utils/application';
 
 const CATEGORIES: { value: ApplicationCategoryEnum; label: string }[] = [
   { value: 'general', label: 'General Request' },
@@ -50,6 +50,7 @@ export default function ApplicationDetailPage() {
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetchApplication(Number(id))
@@ -66,6 +67,7 @@ export default function ApplicationDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  const returnedForChanges = isReturnedForChanges(app as Application);
   const isDraft = app?.status === 'draft';
 
   /**
@@ -90,6 +92,7 @@ export default function ApplicationDetailPage() {
       amount: app.amount,
     });
     setDirty(false);
+    setFieldErrors({});
   };
 
   /**
@@ -102,9 +105,19 @@ export default function ApplicationDetailPage() {
       setApp(updated);
       setDirty(false);
       toast.success('Changes saved.');
+      setFieldErrors({});
     } catch (err: unknown) {
-      const error = err as { response: { data: { detail: string } } };
-      toast.error(error?.response?.data?.detail ?? 'Failed to save changes.');
+      const detail = (err as { response: { data: { detail: string } } })?.response?.data?.detail;
+
+      if (detail && typeof detail === 'object') {
+        const errors: Record<string, string> = {};
+        for (const [field, messages] of Object.entries(detail)) {
+          errors[field] = Array.isArray(messages) ? (messages[0] as string) : String(messages);
+        }
+        setFieldErrors(errors);
+      } else {
+        toast.error(detail ?? 'Failed to save changes.');
+      }
     } finally {
       setSaving(false);
     }
@@ -159,13 +172,15 @@ export default function ApplicationDetailPage() {
         <div className="space-y-1.5">
           <h1 className="text-xl font-semibold">{app.title}</h1>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <StatusBadge status={app.status} />
+            <StatusBadge
+              status={returnedForChanges === true ? 'returned_for_changes' : app.status}
+            />
             <span>·</span>
-            <span>Updated {new Date(app.updated_at).toLocaleDateString()}</span>
+            <span>Updated {new Date(app.updated_at).toLocaleString()}</span>
           </div>
         </div>
 
-        {isDraft && (
+        {isDraft === true && (
           <Button disabled={submitting || dirty} onClick={handleSubmit}>
             {submitting ? (
               <>
@@ -184,10 +199,22 @@ export default function ApplicationDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5">
         {/* Main */}
         <div className="space-y-5">
-          {isDraft && (
+          {isDraft === true && (
             <div className="flex items-center gap-2 rounded-md border border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950 px-4 py-3 text-sm text-yellow-800 dark:text-yellow-300">
               <Info className="h-4 w-4 shrink-0" />
-              This application is in draft. Edit and submit when ready.
+              {returnedForChanges === true
+                ? `${app.audit_logs[0].actor.first_name} ${app.audit_logs[0].actor.last_name}
+                    requested changes. Please edit the application to address the requested changes and submit the application.
+                  `
+                : 'This application is in draft. Edit and submit when ready.'}
+            </div>
+          )}
+
+          {app.status === 'rejected' && (
+            <div className="flex items-center gap-2 rounded-md border border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950 px-4 py-3 text-sm text-yellow-800 dark:text-yellow-300">
+              <Info className="h-4 w-4 shrink-0" />
+              {app.audit_logs[0].actor.first_name} {app.audit_logs[0].actor.last_name} rejected this
+              application. Check the Activity section to see their comments.
             </div>
           )}
 
@@ -196,15 +223,20 @@ export default function ApplicationDetailPage() {
               Details
             </p>
 
-            {isDraft ? (
+            {isDraft === true ? (
               <>
                 <div className="space-y-1">
-                  <Label htmlFor="title">Title</Label>
+                  <Label htmlFor="title">
+                    Title <span className="text-destructive">*</span>
+                  </Label>
                   <Input
                     id="title"
                     value={form.title}
                     onChange={(e) => handleChange('title', e.target.value)}
                   />
+                  {fieldErrors.title && (
+                    <p className="text-sm text-destructive">{fieldErrors.title}</p>
+                  )}
                 </div>
 
                 <div className="space-y-1">
@@ -224,7 +256,7 @@ export default function ApplicationDetailPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="amount">Amount in ZMW (optional)</Label>
+                  <Label htmlFor="amount">Amount (ZMW)</Label>
                   <Input
                     id="amount"
                     placeholder="Enter amount"

@@ -8,7 +8,10 @@ import AppLayout from '@/components/app-layout';
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <AppLayout
-      breadcrumb="My Applications"
+      breadcrumb={{
+        title: 'My Applications',
+        url: '/applications',
+      }}
       navItems={[
         {
           title: 'My Applications',

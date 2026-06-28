@@ -22,13 +22,13 @@ export function formatAmount(amount: number | string): string {
  * @returns `true` if the application has been returned for changes.
  */
 export function isReturnedForChanges(app: Application): boolean {
-  const log = [...app.audit_logs].sort((x, y) => y.id - x.id)[0];
+  const log = [...(app?.audit_logs || [])].sort((x, y) => y.id - x.id)[0];
   return (
-    app.status === 'draft' &&
-    app.audit_logs.length > 0 &&
-    log.from_status === 'under_review' &&
-    log.to_status === 'draft' &&
-    (log.comment || '').trim() !== ''
+    app?.status === 'draft' &&
+    app?.audit_logs.length > 0 &&
+    log?.from_status === 'under_review' &&
+    log?.to_status === 'draft' &&
+    (log?.comment || '').trim() !== ''
   );
 }
 
