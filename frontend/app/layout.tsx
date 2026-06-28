@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip"
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
 
@@ -29,7 +30,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body>
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
         <Toaster
           position="top-center"
           closeButton
