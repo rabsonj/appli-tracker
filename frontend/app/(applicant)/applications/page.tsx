@@ -32,13 +32,19 @@ export default function Page() {
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const loadApplications = () => {
-    fetchApplications().then(setAllData).catch(console.error);
+    fetchApplications()
+      .then(setAllData)
+      .catch(console.error)
   };
 
   useEffect(() => {
-    loadApplications();
+    fetchApplications()
+      .then(setAllData)
+      .catch(console.error).
+      finally(() => setLoading(false));
   }, []);
 
   const filtered =
@@ -73,7 +79,7 @@ export default function Page() {
         <Button onClick={() => setOpen(true)}>Create Application</Button>
       </div>
 
-      <DataTable columns={columns} data={paginated} />
+      <DataTable columns={columns} data={paginated} loading={loading} />
 
       <div className="flex items-center justify-end gap-2">
         <Button
