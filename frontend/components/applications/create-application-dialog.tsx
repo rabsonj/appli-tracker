@@ -75,7 +75,9 @@ export function CreateApplicationDialog({
         <div className="space-y-4 py-2">
           {/* Title */}
           <div className="space-y-1">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">
+              Title <span className="text-destructive">*</span>
+            </Label>
             <Input
               id="title"
               value={form.title}
@@ -106,7 +108,7 @@ export function CreateApplicationDialog({
 
           {/* Amount */}
           <div className="space-y-1">
-            <Label htmlFor="amount">Amount (optional)</Label>
+            <Label htmlFor="amount">Amount (ZMW)</Label>
             <Input
               id="amount"
               placeholder="Enter amount"

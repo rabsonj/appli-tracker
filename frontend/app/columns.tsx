@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Application, ApplicationStatusEnum, Role } from '@/types';
 import { formatAmount } from '@/utils/application';
 import { getReturnCommentCount, isReturnedForChanges } from '@/utils/application';
@@ -18,7 +19,7 @@ export const getColumns = (role: Role): ColumnDef<Application>[] => {
       header: 'Title',
       cell: ({ row }) => {
         const title: string = row.getValue('title') ?? '';
-        return <span>{title.length > 40 ? title.slice(0, 40) + '…' : title}</span>;
+        return <span>{title.length > 30 ? title.slice(0, 30) + '…' : title}</span>;
       },
     },
     {
@@ -26,24 +27,42 @@ export const getColumns = (role: Role): ColumnDef<Application>[] => {
       header: 'Description',
       cell: ({ row }) => {
         const desc: string = row.getValue('description') ?? '';
-        return <span>{desc.length > 40 ? desc.slice(0, 40) + '…' : desc}</span>;
+        return <span>{desc.length > 25 ? desc.slice(0, 35) + '…' : desc}</span>;
       },
     },
     {
       accessorKey: 'status',
       header: 'Status',
       cell: ({ row }) => {
-        const status = row.getValue('status') as ApplicationStatusEnum;
         const returned = isReturnedForChanges(row.original);
-        const commentCount = returned === true ? getReturnCommentCount(row.original) : 0;
+        let commentCount = returned === true ? getReturnCommentCount(row.original) : 0;
+        const status =
+          returned === true
+            ? 'returned_for_changes'
+            : (row.getValue('status') as ApplicationStatusEnum);
 
-        return returned === true ? (
-          <div className="flex items-center gap-1.5">
-            <StatusBadge status={status} /> •
-            <span className="text-xs text-muted-foreground">
-              {commentCount} comment{commentCount !== 1 ? 's' : ''}
-            </span>
-          </div>
+        if (status === 'rejected') {
+          commentCount = row.original.audit_logs.filter(
+            (log) =>
+              log.from_status === 'under_review' &&
+              log.to_status === 'rejected' &&
+              (log.comment || '').trim() !== ''
+          ).length;
+        }
+
+        return returned === true || status === 'rejected' ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-1.5 cursor-default">
+                  <StatusBadge status={status} />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="flex flex-col items-start gap-1 max-w-60">
+                {commentCount} comment{commentCount !== 1 ? 's' : ''}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ) : (
           <StatusBadge status={status} />
         );

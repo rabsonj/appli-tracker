@@ -5,7 +5,7 @@ import { STATUS_CONFIG } from '@/constants';
 import { ApplicationStatusEnum } from '@/types';
 
 interface StatusBadgeProps {
-  status: ApplicationStatusEnum;
+  status: ApplicationStatusEnum | 'returned_for_changes';
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
@@ -13,5 +13,11 @@ export function StatusBadge({ status }: StatusBadgeProps) {
     label: status,
     className: 'bg-gray-50 text-gray-700',
   };
-  return <Badge className={config.className}>{config.label}</Badge>;
+  const Icon = config.icon;
+  return (
+    <Badge className={config.className}>
+      {Icon && <Icon className="mr-1 h-3 w-3" />}
+      {config.label}
+    </Badge>
+  );
 }
