@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { toast } from "sonner";
-import { createApplication } from "@/lib/api/applications";
-import { ApplicationWritePayload, Category } from "@/types";
+import { useState } from 'react';
+import { toast } from 'sonner';
+
+import { createApplication } from '@/lib/api/applications';
+import { ApplicationWritePayload, Category } from '@/types';
 
 const EMPTY_FORM: ApplicationWritePayload = {
-  title: "",
-  category: "general",
-  description: "",
+  title: '',
+  category: 'general',
+  description: '',
   amount: undefined,
 };
 
@@ -34,24 +35,20 @@ export function useCreateApplicationForm(onSuccess: () => void) {
 
     try {
       await createApplication(form);
-      toast.success("Application created successfully.");
+      toast.success('Application created successfully.');
       setForm(EMPTY_FORM);
       onSuccess();
     } catch (err: unknown) {
-      const detail =
-        (err as { response: { data: { detail: string } } })?.response?.data
-          ?.detail;
+      const detail = (err as { response: { data: { detail: string } } })?.response?.data?.detail;
 
-      if (detail && typeof detail === "object") {
+      if (detail && typeof detail === 'object') {
         const errors: Record<string, string> = {};
         for (const [field, messages] of Object.entries(detail)) {
-          errors[field] = Array.isArray(messages)
-            ? (messages[0] as string)
-            : String(messages);
+          errors[field] = Array.isArray(messages) ? (messages[0] as string) : String(messages);
         }
         setFieldErrors(errors);
       } else {
-        toast.error(detail ?? "Failed to create application.");
+        toast.error(detail ?? 'Failed to create application.');
       }
     } finally {
       setCreating(false);

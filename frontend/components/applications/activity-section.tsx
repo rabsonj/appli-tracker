@@ -1,18 +1,15 @@
-"use client";
+'use client';
 
-import { Bubble, BubbleContent, BubbleReactions } from "@/components/ui/bubble"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Application, ApplicationStatusEnum } from "@/types";
-import { StatusBadge } from "@/components/status-badge";
-import { AUDIT_DOT_COLOR } from "@/constants";
-import { getReturnCommentCount } from "@/utils/application";
-import { getInitials } from "@/utils/user";
-import { useAuthStore } from "@/store/auth";
-import { Button } from "../ui/button";
+import { StatusBadge } from '@/components/status-badge';
+import { Bubble, BubbleContent, BubbleReactions } from '@/components/ui/bubble';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { AUDIT_DOT_COLOR } from '@/constants';
+import { useAuthStore } from '@/store/auth';
+import { Application, ApplicationStatusEnum } from '@/types';
+import { getReturnCommentCount } from '@/utils/application';
+import { getInitials } from '@/utils/user';
+
+import { Button } from '../ui/button';
 
 interface ActivitySectionProps {
   app: Application;
@@ -30,7 +27,7 @@ export function ActivitySection({ app }: ActivitySectionProps) {
         </p>
         {commentCount > 0 && (
           <p className="text-xs text-muted-foreground">
-            {commentCount} comment{commentCount > 1 ? "s" : ""}
+            {commentCount} comment{commentCount > 1 ? 's' : ''}
           </p>
         )}
       </div>
@@ -40,13 +37,13 @@ export function ActivitySection({ app }: ActivitySectionProps) {
         <div className="space-y-0 divide-y divide-border">
           {app.audit_logs.map((log) => {
             const returnedForChanges =
-              log.from_status === "under_review" && log.to_status === "draft";
+              log.from_status === 'under_review' && log.to_status === 'draft';
 
             return (
               <div key={log.id} className="flex gap-3 py-3">
                 <div
                   className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${
-                    AUDIT_DOT_COLOR[log.to_status] ?? "bg-gray-400"
+                    AUDIT_DOT_COLOR[log.to_status] ?? 'bg-gray-400'
                   }`}
                 />
                 <div>
@@ -55,40 +52,35 @@ export function ActivitySection({ app }: ActivitySectionProps) {
                       'You '
                     ) : (
                       <span className="font-bold">
-                        {log.actor.first_name} {log.actor.last_name} {" "}
+                        {log.actor.first_name} {log.actor.last_name}{' '}
                       </span>
                     )}
                     {returnedForChanges ? (
-                      "requested changes"
+                      'requested changes'
                     ) : (
                       <>
-                        <span>moved to{" "}</span>
-                        <StatusBadge
-                          status={log.to_status as ApplicationStatusEnum}
-                        />
+                        <span>moved to </span>
+                        <StatusBadge status={log.to_status as ApplicationStatusEnum} />
                       </>
                     )}
                   </div>
                   {log.comment && (
                     <div className="pb-6">
-                      <Bubble variant="muted" className="mt-2">
+                      <Bubble className="mt-2" variant="muted">
                         <BubbleContent>
-                          <span className="text-sm italic">
-                            &quot;{log.comment}&quot;
-                          </span>
+                          <span className="text-sm italic">&quot;{log.comment}&quot;</span>
                         </BubbleContent>
-                        <BubbleReactions
-                          align="start"
-                          role="img"
-                        >
+                        <BubbleReactions align="start" role="img">
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button className="p-1" variant="ghost" size="icon-xs">
+                              <Button className="p-1" size="icon-xs" variant="ghost">
                                 {getInitials(log.actor)}
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent className="flex flex-col items-start">
-                              <span>{log.actor.first_name} {log.actor.last_name}</span>
+                              <span>
+                                {log.actor.first_name} {log.actor.last_name}
+                              </span>
                               <span>{log.actor.email}</span>
                             </TooltipContent>
                           </Tooltip>

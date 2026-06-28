@@ -1,18 +1,18 @@
+import { apiClient } from '@/lib/axios';
 import {
   Application,
-  PatchedApplication,
-  ApplicationWritePayload,
+  ApplicationRejectionPayload,
   ApplicationReturnedForChangesPayload,
-  ApplicationRejectionPayload
-} from "@/types";
-import { apiClient } from "@/lib/axios";
+  ApplicationWritePayload,
+  PatchedApplication,
+} from '@/types';
 
 /**
  * Fetches all applications.
  * @returns A list of applications.
  */
 export async function fetchApplications(): Promise<Application[]> {
-  const response = await apiClient.get("/applications/");
+  const response = await apiClient.get('/applications/');
   return response.data;
 }
 
@@ -31,10 +31,8 @@ export const fetchApplication = async (id: number): Promise<Application> => {
  * @param data - The application data.
  * @returns The created application.
  */
-export const createApplication = async (
-  data: ApplicationWritePayload
-): Promise<Application> => {
-  const res = await apiClient.post("/applications/", data);
+export const createApplication = async (data: ApplicationWritePayload): Promise<Application> => {
+  const res = await apiClient.post('/applications/', data);
   return res.data;
 };
 

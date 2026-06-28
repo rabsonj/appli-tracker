@@ -1,4 +1,4 @@
-import { Application } from "@/types";
+import { Application } from '@/types';
 
 /**
  * Formats an amount to a human-readable format.
@@ -6,11 +6,11 @@ import { Application } from "@/types";
  * @returns The formatted amount.
  */
 export function formatAmount(amount: number | string): string {
-    const amountNumber = Number(amount ?? '0');
-    return amountNumber.toLocaleString("en-US", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    })
+  const amountNumber = Number(amount ?? '0');
+  return amountNumber.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
 }
 
 /**
@@ -24,11 +24,11 @@ export function formatAmount(amount: number | string): string {
 export function isReturnedForChanges(app: Application): boolean {
   const log = [...app.audit_logs].sort((x, y) => y.id - x.id)[0];
   return (
-    app.status === "draft" &&
+    app.status === 'draft' &&
     app.audit_logs.length > 0 &&
-    log.from_status === "under_review" &&
-    log.to_status === "draft" &&
-    (log.comment || "").trim() !== ""
+    log.from_status === 'under_review' &&
+    log.to_status === 'draft' &&
+    (log.comment || '').trim() !== ''
   );
 }
 
@@ -43,8 +43,8 @@ export function isReturnedForChanges(app: Application): boolean {
 export function getReturnCommentCount(app: Application): number {
   return app.audit_logs.filter(
     (log) =>
-      log.from_status === "under_review" &&
-      log.to_status === "draft" &&
-      (log.comment || "").trim() !== ""
+      log.from_status === 'under_review' &&
+      log.to_status === 'draft' &&
+      (log.comment || '').trim() !== ''
   ).length;
 }

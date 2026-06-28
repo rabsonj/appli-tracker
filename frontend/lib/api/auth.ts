@@ -1,5 +1,5 @@
-import { apiClient } from "@/lib/axios";
-import { AuthToken, Login, User } from "@/types";
+import { apiClient } from '@/lib/axios';
+import { AuthToken, Login, User } from '@/types';
 
 /**
  * Logs in a user.
@@ -7,7 +7,7 @@ import { AuthToken, Login, User } from "@/types";
  * @returns The authentication tokens and user information.
  */
 export async function login(payload: Login): Promise<AuthToken> {
-  const response = await apiClient.post<AuthToken>("/auth/login/", payload);
+  const response = await apiClient.post<AuthToken>('/auth/login/', payload);
   return response.data;
 }
 
@@ -16,6 +16,6 @@ export async function login(payload: Login): Promise<AuthToken> {
  * @returns The current user.
  */
 export async function fetchMe(): Promise<User> {
-  const response = await apiClient.get<User>("/auth/me/");
+  const response = await apiClient.get<User>('/auth/me/');
   return response.data;
 }

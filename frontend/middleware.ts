@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
-const PUBLIC_ROUTES = ["/login"];
+const PUBLIC_ROUTES = ['/login'];
 
 /**
  * Middleware function to handle authentication and authorization.
@@ -10,16 +10,16 @@ const PUBLIC_ROUTES = ["/login"];
 export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
 
-  const token = request.cookies.get("access_token")?.value;
-  const role = request.cookies.get("user_role")?.value;
+  const token = request.cookies.get('access_token')?.value;
+  const role = request.cookies.get('user_role')?.value;
 
-  if (!token && pathname !== "/login") {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!token && pathname !== '/login') {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (pathname === "/login" && token) {
+  if (pathname === '/login' && token) {
     return NextResponse.redirect(
-      new URL(role === "reviewer" ? "/queue" : "/applications", request.url)
+      new URL(role === 'reviewer' ? '/queue' : '/applications', request.url)
     );
   }
 
@@ -28,12 +28,12 @@ export function middleware(request: NextRequest): NextResponse {
   }
 
   if (!token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

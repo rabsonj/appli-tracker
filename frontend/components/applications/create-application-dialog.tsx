@@ -1,33 +1,34 @@
-"use client";
+'use client';
 
+import { Loader2 } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
-import { Category } from "@/types";
-import { useCreateApplicationForm } from "@/hooks/use-create-application-form";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useCreateApplicationForm } from '@/hooks/use-create-application-form';
+import { Category } from '@/types';
 
 const CATEGORIES: { value: Category; label: string }[] = [
-  { value: "general", label: "General Request" },
-  { value: "budget", label: "Budget Approval" },
-  { value: "leave", label: "Leave Request" },
-  { value: "procurement", label: "Procurement" },
-  { value: "other", label: "Other" },
+  { value: 'general', label: 'General Request' },
+  { value: 'budget', label: 'Budget Approval' },
+  { value: 'leave', label: 'Leave Request' },
+  { value: 'procurement', label: 'Procurement' },
+  { value: 'other', label: 'Other' },
 ];
 
 interface CreateApplicationDialogProps {
@@ -60,7 +61,12 @@ export function CreateApplicationDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v) handleCancel(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!v) handleCancel();
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create Application</DialogTitle>
@@ -73,11 +79,9 @@ export function CreateApplicationDialog({
             <Input
               id="title"
               value={form.title}
-              onChange={(e) => handleFormChange("title", e.target.value)}
+              onChange={(e) => handleFormChange('title', e.target.value)}
             />
-            {fieldErrors.title && (
-              <p className="text-sm text-destructive">{fieldErrors.title}</p>
-            )}
+            {fieldErrors.title && <p className="text-sm text-destructive">{fieldErrors.title}</p>}
           </div>
 
           {/* Category */}
@@ -105,12 +109,12 @@ export function CreateApplicationDialog({
             <Label htmlFor="amount">Amount (optional)</Label>
             <Input
               id="amount"
-              type="number"
               placeholder="Enter amount"
-              value={form.amount ?? ""}
+              type="number"
+              value={form.amount ?? ''}
               onChange={(e) => {
                 const value = e.target.value;
-                handleFormChange("amount", value === "" ? undefined : Number(value));
+                handleFormChange('amount', value === '' ? undefined : Number(value));
               }}
             />
           </div>
@@ -121,18 +125,18 @@ export function CreateApplicationDialog({
             <Textarea
               rows={4}
               value={form.description}
-              onChange={(e) => handleFormChange("description", e.target.value)}
+              onChange={(e) => handleFormChange('description', e.target.value)}
             />
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleCancel} disabled={creating}>
+          <Button disabled={creating} variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button onClick={handleCreate} disabled={creating}>
+          <Button disabled={creating} onClick={handleCreate}>
             {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {creating ? "Creating..." : "Create Application"}
+            {creating ? 'Creating...' : 'Create Application'}
           </Button>
         </DialogFooter>
       </DialogContent>

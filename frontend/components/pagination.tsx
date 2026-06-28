@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 interface PaginationProps {
   page: number;
@@ -12,10 +12,10 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
   return (
     <div className="flex items-center justify-end gap-2">
       <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
+        size="sm"
+        variant="outline"
+        onClick={() => onPageChange(page - 1)}
       >
         Previous
       </Button>
@@ -23,10 +23,10 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
         Page {page} of {totalPages}
       </span>
       <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
+        size="sm"
+        variant="outline"
+        onClick={() => onPageChange(page + 1)}
       >
         Next
       </Button>

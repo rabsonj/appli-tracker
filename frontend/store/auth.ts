@@ -1,7 +1,8 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import Cookies from "js-cookie";
-import { User } from "@/types";
+import Cookies from 'js-cookie';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+import { User } from '@/types';
 
 /**
  * Represents the authentication state of the application.
@@ -37,21 +38,21 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
 
       setAuth: (user, accessToken, refreshToken) => {
-        Cookies.set("access_token", accessToken, { expires: 1 / 3 }); // 8 hours
-        Cookies.set("user_role", user.role, { expires: 1 / 3 });
+        Cookies.set('access_token', accessToken, { expires: 1 / 3 }); // 8 hours
+        Cookies.set('user_role', user.role, { expires: 1 / 3 });
         set({ user, accessToken, refreshToken });
       },
 
       clearAuth: () => {
-        Cookies.remove("access_token");
-        Cookies.remove("user_role");
+        Cookies.remove('access_token');
+        Cookies.remove('user_role');
         set({ user: null, accessToken: null, refreshToken: null });
       },
 
       isAuthenticated: () => Boolean(get().accessToken),
     }),
     {
-      name: "auth-storage",
+      name: 'auth-storage',
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
