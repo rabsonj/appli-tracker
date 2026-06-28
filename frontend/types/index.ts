@@ -11,7 +11,8 @@ export type ApplicationWrite = components['schemas']['ApplicationWrite'];
 export type PatchedApplication = components['schemas']['PatchedApplicationWrite'];
 export type User = components['schemas']['User'];
 export type AuditLog = components['schemas']['AuditLog'];
-export type ApplicationStatusEnum = components['schemas']['StatusEnum'] | ReturnForChangesEnum;
+export type ApplicationStatusEnum =
+  components['schemas']['StatusEnum'] | ReturnForChangesEnum.ReturnForChanges;
 export type ApplicationCategoryEnum = components['schemas']['CategoryEnum'];
 export type RoleEnum = components['schemas']['RoleEnum'];
 export type AuthToken = components['schemas']['TokenRefresh'];
