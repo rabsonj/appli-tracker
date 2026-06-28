@@ -272,6 +272,8 @@ A demonstration of the applicant's journey, from creating to submitting an appli
 A demonstration of the reviewer's process, including reviewing, approving, and rejecting applications.
 [Watch Video](media/videos/reviewer.webm)
 
+---
+
 ## Conclusion
 
 Appli-Tracker successfully implements a robust, two-sided web application for managing an application submission and approval workflow. By leveraging Django REST Framework for a state-machine-driven backend and Next.js with React for a responsive frontend, the project demonstrates clear separation of concerns, strong authorization enforcement, and a focus on user experience through clear error handling and an audit trail. The design decisions prioritize a solid core over feature breadth, providing a strong foundation for future enhancements.
