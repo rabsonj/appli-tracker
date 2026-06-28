@@ -1,35 +1,26 @@
-import { ColumnDef } from "@tanstack/react-table";
-import { components } from "@/src/types/api";
+import { ColumnDef } from '@tanstack/react-table';
+
+import { components } from '@/src/types/api';
 
 enum ReturnForChangesEnum {
-  ReturnForChanges = "returned_for_changes"
+  ReturnForChanges = 'returned_for_changes',
 }
 
-export type Application = components["schemas"]["Application"];
-export type ApplicationWrite = components["schemas"]["ApplicationWrite"];
-export type PatchedApplication = components["schemas"]["PatchedApplicationWrite"];
-export type User = components["schemas"]["User"];
-export type AuditLog = components["schemas"]["AuditLog"];
-export type ApplicationStatusEnum = components["schemas"]["StatusEnum"] | ReturnForChangesEnum;
-export type ApplicationCategoryEnum = components["schemas"]["CategoryEnum"];
-export type RoleEnum = components["schemas"]["RoleEnum"];
-export type AuthToken = components["schemas"]["TokenRefresh"];
+export type Application = components['schemas']['Application'];
+export type ApplicationWrite = components['schemas']['ApplicationWrite'];
+export type PatchedApplication = components['schemas']['PatchedApplicationWrite'];
+export type User = components['schemas']['User'];
+export type AuditLog = components['schemas']['AuditLog'];
+export type ApplicationStatusEnum = components['schemas']['StatusEnum'] | ReturnForChangesEnum;
+export type ApplicationCategoryEnum = components['schemas']['CategoryEnum'];
+export type RoleEnum = components['schemas']['RoleEnum'];
+export type AuthToken = components['schemas']['TokenRefresh'];
 
-export type Role = "applicant" | "reviewer";
+export type Role = 'applicant' | 'reviewer';
 
-export type Status =
-  | "draft"
-  | "submitted"
-  | "under_review"
-  | "approved"
-  | "rejected";
+export type Status = 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected';
 
-export type Category =
-  | "general"
-  | "budget"
-  | "leave"
-  | "procurement"
-  | "other";
+export type Category = 'general' | 'budget' | 'leave' | 'procurement' | 'other';
 
 export interface ApplicationWritePayload {
   title: string;
@@ -39,11 +30,11 @@ export interface ApplicationWritePayload {
 }
 
 export interface ApplicationRejectionPayload {
-  comment: string
+  comment: string;
 }
 
 export interface ApplicationReturnedForChangesPayload {
-  comment: string
+  comment: string;
 }
 
 export interface TransitionCommentPayload {
@@ -62,6 +53,6 @@ export type DataTableProps<TData, TValue> = {
 };
 
 export interface Login {
-  username: string
-  password: string
+  username: string;
+  password: string;
 }

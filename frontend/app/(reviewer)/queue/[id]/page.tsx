@@ -1,44 +1,45 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import {
-  fetchApplication,
-  startReview,
-  approveApplication,
-  rejectApplication,
-  returnForChanges,
-} from "@/lib/api/applications";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
 import {
   ArrowLeft,
   CheckCircle,
-  XCircle,
-  RotateCcw,
-  Eye,
-  Loader2,
-  Info,
   Clock,
-} from "lucide-react";
-import { Application } from "@/types";
-import { getInitials } from "@/utils/user";
-import { formatAmount } from "@/utils/application";
-import { StatusBadge } from "@/components/status-badge";
-import { InfoSection } from "@/components/applications/info-section";
-import { ActivitySection } from "@/components/applications/activity-section";
+  Eye,
+  Info,
+  Loader2,
+  RotateCcw,
+  XCircle,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-type ModalType = "reject" | "return" | null;
+import { ActivitySection } from '@/components/applications/activity-section';
+import { InfoSection } from '@/components/applications/info-section';
+import { StatusBadge } from '@/components/status-badge';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  approveApplication,
+  fetchApplication,
+  rejectApplication,
+  returnForChanges,
+  startReview,
+} from '@/lib/api/applications';
+import { Application } from '@/types';
+import { formatAmount } from '@/utils/application';
+import { getInitials } from '@/utils/user';
+
+type ModalType = 'reject' | 'return' | null;
 
 /**
  * Renders the application detail page for reviewers.
@@ -50,8 +51,8 @@ export default function ReviewerApplicationDetailPage() {
   const [app, setApp] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<ModalType>(null);
-  const [comment, setComment] = useState("");
-  const [commentError, setCommentError] = useState("");
+  const [comment, setComment] = useState('');
+  const [commentError, setCommentError] = useState('');
   const [acting, setActing] = useState(false);
   const [starting, setStarting] = useState(false);
   const [approving, setApproving] = useState(false);
@@ -59,7 +60,7 @@ export default function ReviewerApplicationDetailPage() {
   useEffect(() => {
     fetchApplication(Number(id))
       .then(setApp)
-      .catch(() => toast.error("Failed to load application."))
+      .catch(() => toast.error('Failed to load application.'))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -68,8 +69,8 @@ export default function ReviewerApplicationDetailPage() {
    */
   const closeModal = () => {
     setModal(null);
-    setComment("");
-    setCommentError("");
+    setComment('');
+    setCommentError('');
   };
 
   /**
@@ -80,10 +81,10 @@ export default function ReviewerApplicationDetailPage() {
     try {
       const updated = await startReview(Number(id));
       setApp(updated);
-      toast.success("Review started.");
+      toast.success('Review started.');
     } catch (err: unknown) {
-      const error = err as { response: { data: { detail: string } } }
-      toast.error(error?.response?.data?.detail ?? "Failed to start review.");
+      const error = err as { response: { data: { detail: string } } };
+      toast.error(error?.response?.data?.detail ?? 'Failed to start review.');
     } finally {
       setStarting(false);
     }
@@ -97,12 +98,10 @@ export default function ReviewerApplicationDetailPage() {
     try {
       const updated = await approveApplication(Number(id));
       setApp(updated);
-      toast.success("Application approved.");
+      toast.success('Application approved.');
     } catch (err: unknown) {
-      const error = err as { response: { data: { detail: string } } }
-      toast.error(
-        error?.response?.data?.detail ?? "Failed to approve application."
-      );
+      const error = err as { response: { data: { detail: string } } };
+      toast.error(error?.response?.data?.detail ?? 'Failed to approve application.');
     } finally {
       setApproving(false);
     }
@@ -113,24 +112,24 @@ export default function ReviewerApplicationDetailPage() {
    */
   const handleModalConfirm = async () => {
     if (!comment.trim()) {
-      setCommentError("A comment is required.");
+      setCommentError('A comment is required.');
       return;
     }
     setActing(true);
     try {
       let updated;
-      if (modal === "reject") {
+      if (modal === 'reject') {
         updated = await rejectApplication(Number(id), { comment });
-        toast.success("Application rejected.");
+        toast.success('Application rejected.');
       } else {
         updated = await returnForChanges(Number(id), { comment });
-        toast.success("Application returned for changes.");
+        toast.success('Application returned for changes.');
       }
       setApp(updated);
       closeModal();
     } catch (err: unknown) {
-      const error = err as { response: { data: { detail: string } } }
-      toast.error(error?.response?.data?.detail ?? "Action failed.");
+      const error = err as { response: { data: { detail: string } } };
+      toast.error(error?.response?.data?.detail ?? 'Action failed.');
     } finally {
       setActing(false);
     }
@@ -152,15 +151,15 @@ export default function ReviewerApplicationDetailPage() {
     );
   }
 
-  const isSubmitted = app.status === "submitted";
-  const isUnderReview = app.status === "under_review";
+  const isSubmitted = app.status === 'submitted';
+  const isUnderReview = app.status === 'under_review';
 
   return (
     <div className="container mx-auto py-10 space-y-6 max-w-5xl">
       {/* Back */}
       <Link
-        href="/queue"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        href="/queue"
       >
         <ArrowLeft className="h-4 w-4" />
         Review Queue
@@ -178,19 +177,17 @@ export default function ReviewerApplicationDetailPage() {
             </div>
             <span>{app.owner.username}</span>
             <span>·</span>
-            <span>
-              Updated {new Date(app.updated_at).toLocaleDateString()}
-            </span>
+            <span>Updated {new Date(app.updated_at).toLocaleDateString()}</span>
           </div>
         </div>
 
         <div className="flex gap-2">
           {isSubmitted && (
             <Button
-              variant="outline"
               className="bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100 dark:bg-yellow-950 dark:text-yellow-300 dark:border-yellow-900"
-              onClick={handleStartReview}
               disabled={starting}
+              variant="outline"
+              onClick={handleStartReview}
             >
               {starting ? (
                 <>
@@ -207,10 +204,10 @@ export default function ReviewerApplicationDetailPage() {
           {isUnderReview && (
             <>
               <Button
-                variant="outline"
                 className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100 dark:bg-green-950 dark:text-green-300 dark:border-green-900"
-                onClick={handleApprove}
                 disabled={approving}
+                variant="outline"
+                onClick={handleApprove}
               >
                 {approving ? (
                   <>
@@ -223,13 +220,13 @@ export default function ReviewerApplicationDetailPage() {
                 )}
               </Button>
               <Button
-                variant="outline"
                 className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 dark:border-red-900"
-                onClick={() => setModal("reject")}
+                variant="outline"
+                onClick={() => setModal('reject')}
               >
                 <XCircle className="mr-2 h-4 w-4" /> Reject
               </Button>
-              <Button variant="outline" onClick={() => setModal("return")}>
+              <Button variant="outline" onClick={() => setModal('return')}>
                 <RotateCcw className="mr-2 h-4 w-4" /> Return for changes
               </Button>
             </>
@@ -264,16 +261,11 @@ export default function ReviewerApplicationDetailPage() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Category</p>
-              <p className="text-sm capitalize">
-                {app.category.replace("_", " ")}
-              </p>
+              <p className="text-sm capitalize">{app.category.replace('_', ' ')}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Amount</p>
-              <p className="text-sm">
-                ZMW{" "}
-                {formatAmount(app.amount || 0)}
-              </p>
+              <p className="text-sm">ZMW {formatAmount(app.amount || 0)}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Description</p>
@@ -299,60 +291,56 @@ export default function ReviewerApplicationDetailPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {modal === "reject"
-                ? "Reject application"
-                : "Return for changes"}
+              {modal === 'reject' ? 'Reject application' : 'Return for changes'}
             </DialogTitle>
           </DialogHeader>
 
           <p className="text-sm text-muted-foreground">
-            {modal === "reject"
-              ? "Provide a reason. This will be visible to the applicant."
-              : "Explain what the applicant needs to address before resubmitting."}
+            {modal === 'reject'
+              ? 'Provide a reason. This will be visible to the applicant.'
+              : 'Explain what the applicant needs to address before resubmitting.'}
           </p>
 
           <div className="space-y-1 py-2">
             <Label htmlFor="comment">Comment</Label>
             <Textarea
-              id="comment"
-              rows={4}
               className="resize-none"
+              id="comment"
               placeholder={
-                modal === "reject"
-                  ? "e.g. Budget exceeds approved limits for this quarter."
-                  : "e.g. Please attach the supporting cost breakdown document."
+                modal === 'reject'
+                  ? 'e.g. Budget exceeds approved limits for this quarter.'
+                  : 'e.g. Please attach the supporting cost breakdown document.'
               }
+              rows={4}
               value={comment}
               onChange={(e) => {
                 setComment(e.target.value);
-                if (e.target.value.trim()) setCommentError("");
+                if (e.target.value.trim()) setCommentError('');
               }}
             />
-            {commentError && (
-              <p className="text-sm text-destructive">{commentError}</p>
-            )}
+            {commentError && <p className="text-sm text-destructive">{commentError}</p>}
           </div>
 
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={closeModal} disabled={acting}>
+            <Button disabled={acting} variant="outline" onClick={closeModal}>
               Cancel
             </Button>
             <Button
-              onClick={handleModalConfirm}
-              disabled={acting}
               className={
-                modal === "reject"
-                  ? "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 dark:bg-red-950 dark:text-red-300"
-                  : ""
+                modal === 'reject'
+                  ? 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 dark:bg-red-950 dark:text-red-300'
+                  : ''
               }
-              variant={modal === "reject" ? "outline" : "default"}
+              disabled={acting}
+              variant={modal === 'reject' ? 'outline' : 'default'}
+              onClick={handleModalConfirm}
             >
               {acting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {acting
-                ? "Confirming..."
-                : modal === "reject"
-                ? "Confirm rejection"
-                : "Confirm return"}
+                ? 'Confirming...'
+                : modal === 'reject'
+                  ? 'Confirm rejection'
+                  : 'Confirm return'}
             </Button>
           </DialogFooter>
         </DialogContent>

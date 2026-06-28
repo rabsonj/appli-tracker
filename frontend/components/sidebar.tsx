@@ -1,23 +1,22 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
+import { ListChecks } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import * as React from 'react';
 
+import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarHeader,
-  SidebarFooter
-} from "@/components/ui/sidebar"
-import { ListChecks } from "lucide-react"
-import { NavUser } from '@/components/nav-user'
-import { useAuthStore } from "@/store/auth";
-
+} from '@/components/ui/sidebar';
+import { useAuthStore } from '@/store/auth';
 
 export function AppSidebar({
   navItems,
@@ -25,10 +24,10 @@ export function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
   navItems?: { title: string; url: string }[];
-  description?: string
+  description?: string;
 }) {
-  const pathname = usePathname()
-  const user = useAuthStore((state) => state.user)
+  const pathname = usePathname();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <Sidebar {...props}>
@@ -46,7 +45,7 @@ export function AppSidebar({
       <SidebarContent className="mt-5 px-1">
         <SidebarMenu>
           {(navItems || []).map((item) => {
-            const isActive = pathname === item.url || pathname.startsWith(item.url + "/")
+            const isActive = pathname === item.url || pathname.startsWith(item.url + '/');
 
             return (
               <SidebarMenuItem key={item.title}>
@@ -54,7 +53,7 @@ export function AppSidebar({
                   <Link href={item.url}>{item.title}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            )
+            );
           })}
         </SidebarMenu>
       </SidebarContent>
@@ -63,5 +62,5 @@ export function AppSidebar({
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

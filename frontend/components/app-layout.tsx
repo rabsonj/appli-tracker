@@ -1,16 +1,11 @@
-import { AppSidebar } from "@/components/sidebar";
+import { AppSidebar } from '@/components/sidebar';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-} from "@/components/ui/breadcrumb";
-
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/breadcrumb';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 /**
  * Renders the application layout.
@@ -28,11 +23,11 @@ export default function AppLayout({
   children: React.ReactNode;
   navItems: { title: string; url: string }[];
   breadcrumb: string;
-  navDescription?: string
+  navDescription?: string;
 }) {
   return (
     <SidebarProvider>
-      <AppSidebar navItems={navItems} description={navDescription} />
+      <AppSidebar description={navDescription} navItems={navItems} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 align-center items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
@@ -45,9 +40,7 @@ export default function AppLayout({
           </Breadcrumb>
         </header>
         <main className="flex flex-1 flex-col py-4 px-5">
-          <div className="flex flex-col min-h-screen @container/main">
-            {children}
-          </div>
+          <div className="flex flex-col min-h-screen @container/main">{children}</div>
         </main>
       </SidebarInset>
     </SidebarProvider>

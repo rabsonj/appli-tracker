@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { DataTable } from "@/components/data-table";
-import ApplicationsStats from "@/components/applications/stats";
-import { useApplications } from "@/hooks/use-applications";
-import { Pagination } from "@/components/pagination";
-import { StatusFilter } from "@/components/status-filter";
-import { getColumns } from "@/app/columns";
+import { getColumns } from '@/app/columns';
+import ApplicationsStats from '@/components/applications/stats';
+import { DataTable } from '@/components/data-table';
+import { Pagination } from '@/components/pagination';
+import { StatusFilter } from '@/components/status-filter';
+import { useApplications } from '@/hooks/use-applications';
 
 /**
  * Renders the applications queue page.
@@ -23,7 +23,7 @@ export default function Page() {
     handlePageChange,
   } = useApplications();
 
-  const columns = getColumns("reviewer");
+  const columns = getColumns('reviewer');
 
   return (
     <div className="container mx-auto py-10 space-y-4">
@@ -37,11 +37,7 @@ export default function Page() {
       <DataTable columns={columns} data={paginated} loading={loading} />
 
       {/* Pagination */}
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
     </div>
   );
 }

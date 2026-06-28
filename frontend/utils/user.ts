@@ -1,4 +1,4 @@
-import { User } from "@/types";
+import { User } from '@/types';
 
 /**
  * Returns initials for a user based on available identity fields.
@@ -20,12 +20,11 @@ export function getInitials(user: User | null): string {
   const username = user?.username?.trim();
   const email = user?.email?.trim();
 
-  const fromNames =
-    first && last ? `${first[0]}${last[0]}` : null;
+  const fromNames = first && last ? `${first[0]}${last[0]}` : null;
 
   const fromUsername = username?.slice(0, 2) ?? null;
 
-  const fromEmail = email?.slice(0, 2) ?? "";
+  const fromEmail = email?.slice(0, 2) ?? '';
 
   const initials = fromNames ?? fromUsername ?? fromEmail;
 

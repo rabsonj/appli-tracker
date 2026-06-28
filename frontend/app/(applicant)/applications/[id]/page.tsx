@@ -1,42 +1,35 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import {
-  fetchApplication,
-  updateApplication,
-  submitApplication,
-} from "@/lib/api/applications";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { ArrowLeft, Info, Loader2, Send } from 'lucide-react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+
+import { ActivitySection } from '@/components/applications/activity-section';
+import { InfoSection } from '@/components/applications/info-section';
+import { StatusBadge } from '@/components/status-badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { toast } from "sonner";
-import { ArrowLeft, Send, Loader2, Info } from "lucide-react";
-import {
-  Application,
-  ApplicationCategoryEnum,
-  PatchedApplication,
-} from "@/types";
-import { formatAmount } from "@/utils/application";
-import { StatusBadge } from "@/components/status-badge";
-import { InfoSection } from "@/components/applications/info-section";
-import { ActivitySection } from "@/components/applications/activity-section";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { fetchApplication, submitApplication, updateApplication } from '@/lib/api/applications';
+import { Application, ApplicationCategoryEnum, PatchedApplication } from '@/types';
+import { formatAmount } from '@/utils/application';
 
 const CATEGORIES: { value: ApplicationCategoryEnum; label: string }[] = [
-  { value: "general", label: "General Request" },
-  { value: "budget", label: "Budget Approval" },
-  { value: "leave", label: "Leave Request" },
-  { value: "procurement", label: "Procurement" },
-  { value: "other", label: "Other" },
+  { value: 'general', label: 'General Request' },
+  { value: 'budget', label: 'Budget Approval' },
+  { value: 'leave', label: 'Leave Request' },
+  { value: 'procurement', label: 'Procurement' },
+  { value: 'other', label: 'Other' },
 ];
 
 /**
@@ -49,9 +42,9 @@ export default function ApplicationDetailPage() {
   const [app, setApp] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<PatchedApplication>({
-    title: "",
-    category: "general",
-    description: "",
+    title: '',
+    category: 'general',
+    description: '',
     amount: undefined,
   });
   const [dirty, setDirty] = useState(false);
@@ -69,11 +62,11 @@ export default function ApplicationDetailPage() {
           amount: data.amount,
         });
       })
-      .catch(() => toast.error("Failed to load application."))
+      .catch(() => toast.error('Failed to load application.'))
       .finally(() => setLoading(false));
   }, [id]);
 
-  const isDraft = app?.status === "draft";
+  const isDraft = app?.status === 'draft';
 
   /**
    * Handles a change in a form field.
@@ -94,7 +87,7 @@ export default function ApplicationDetailPage() {
       title: app.title,
       category: app.category,
       description: app.description,
-      amount: app.amount
+      amount: app.amount,
     });
     setDirty(false);
   };
@@ -108,10 +101,10 @@ export default function ApplicationDetailPage() {
       const updated = await updateApplication(Number(id), form);
       setApp(updated);
       setDirty(false);
-      toast.success("Changes saved.");
+      toast.success('Changes saved.');
     } catch (err: unknown) {
-      const error = err as { response: { data: { detail: string } } }
-      toast.error(error?.response?.data?.detail ?? "Failed to save changes.");
+      const error = err as { response: { data: { detail: string } } };
+      toast.error(error?.response?.data?.detail ?? 'Failed to save changes.');
     } finally {
       setSaving(false);
     }
@@ -125,12 +118,10 @@ export default function ApplicationDetailPage() {
     try {
       const updated = await submitApplication(Number(id));
       setApp(updated);
-      toast.success("Application submitted successfully.");
+      toast.success('Application submitted successfully.');
     } catch (err: unknown) {
-      const error = err as { response: { data: { detail: string } } }
-      toast.error(
-        error?.response?.data?.detail ?? "Failed to submit application."
-      );
+      const error = err as { response: { data: { detail: string } } };
+      toast.error(error?.response?.data?.detail ?? 'Failed to submit application.');
     } finally {
       setSubmitting(false);
     }
@@ -156,8 +147,8 @@ export default function ApplicationDetailPage() {
     <div className="container mx-auto py-10 space-y-6 max-w-5xl">
       {/* Back */}
       <Link
-        href="/applications"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        href="/applications"
       >
         <ArrowLeft className="h-4 w-4" />
         My Applications
@@ -170,14 +161,12 @@ export default function ApplicationDetailPage() {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <StatusBadge status={app.status} />
             <span>·</span>
-            <span>
-              Updated {new Date(app.updated_at).toLocaleDateString()}
-            </span>
+            <span>Updated {new Date(app.updated_at).toLocaleDateString()}</span>
           </div>
         </div>
 
         {isDraft && (
-          <Button onClick={handleSubmit} disabled={submitting || dirty}>
+          <Button disabled={submitting || dirty} onClick={handleSubmit}>
             {submitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
@@ -214,16 +203,13 @@ export default function ApplicationDetailPage() {
                   <Input
                     id="title"
                     value={form.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
+                    onChange={(e) => handleChange('title', e.target.value)}
                   />
                 </div>
 
                 <div className="space-y-1">
                   <Label htmlFor="category">Category</Label>
-                  <Select
-                    value={form.category}
-                    onValueChange={(v) => handleChange("category", v)}
-                  >
+                  <Select value={form.category} onValueChange={(v) => handleChange('category', v)}>
                     <SelectTrigger id="category">
                       <SelectValue />
                     </SelectTrigger>
@@ -241,12 +227,12 @@ export default function ApplicationDetailPage() {
                   <Label htmlFor="amount">Amount in ZMW (optional)</Label>
                   <Input
                     id="amount"
-                    type="number"
                     placeholder="Enter amount"
-                    value={form.amount ?? ""}
+                    type="number"
+                    value={form.amount ?? ''}
                     onChange={(e) => {
                       const value = e.target.value;
-                      handleChange("amount", value === "" ? undefined : Number(value));
+                      handleChange('amount', value === '' ? undefined : Number(value));
                     }}
                   />
                 </div>
@@ -254,33 +240,26 @@ export default function ApplicationDetailPage() {
                 <div className="space-y-1">
                   <Label htmlFor="description">Description</Label>
                   <Textarea
+                    className="resize-none overflow-y-auto max-h-40"
                     id="description"
                     rows={4}
-                    className="resize-none overflow-y-auto max-h-40"
                     value={form.description}
-                    onChange={(e) =>
-                      handleChange("description", e.target.value)
-                    }
+                    onChange={(e) => handleChange('description', e.target.value)}
                   />
                 </div>
 
                 {dirty && (
                   <div className="flex justify-end gap-2 pt-2 border-t">
-                    <Button
-                      variant="outline"
-                      onClick={handleDiscard}
-                      disabled={saving}
-                    >
+                    <Button disabled={saving} variant="outline" onClick={handleDiscard}>
                       Discard
                     </Button>
-                    <Button onClick={handleSave} disabled={saving}>
+                    <Button disabled={saving} onClick={handleSave}>
                       {saving ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                          Saving...
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
                         </>
                       ) : (
-                        "Save changes"
+                        'Save changes'
                       )}
                     </Button>
                   </div>
@@ -293,24 +272,15 @@ export default function ApplicationDetailPage() {
                   <p className="text-sm">{app.title}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Category
-                  </p>
-                  <p className="text-sm capitalize">
-                    {app.category.replace("_", " ")}
-                  </p>
+                  <p className="text-xs text-muted-foreground mb-1">Category</p>
+                  <p className="text-sm capitalize">{app.category.replace('_', ' ')}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Amount</p>
-                  <p className="text-sm">
-                    ZMW{" "}
-                    {formatAmount(app.amount || 0)}
-                  </p>
+                  <p className="text-sm">ZMW {formatAmount(app.amount || 0)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Description
-                  </p>
+                  <p className="text-xs text-muted-foreground mb-1">Description</p>
                   <p className="text-sm leading-relaxed">{app.description}</p>
                 </div>
               </>

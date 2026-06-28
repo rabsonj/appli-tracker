@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/auth";
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+import { useAuthStore } from '@/store/auth';
 
 /**
  * Renders the home page, which redirects the user based on their authentication status and role.
@@ -14,14 +15,14 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.replace("/login");
+      router.replace('/login');
       return;
     }
 
-    if (user?.role === "reviewer") {
-      router.replace("/queue");
+    if (user?.role === 'reviewer') {
+      router.replace('/queue');
     } else {
-      router.replace("/applications");
+      router.replace('/applications');
     }
   }, [user, isAuthenticated, router]);
 

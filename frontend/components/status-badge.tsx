@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/badge";
-import { STATUS_CONFIG } from '@/constants'
-import { ApplicationStatusEnum } from "@/types";
+import { Badge } from '@/components/ui/badge';
+import { STATUS_CONFIG } from '@/constants';
+import { ApplicationStatusEnum } from '@/types';
 
 interface StatusBadgeProps {
   status: ApplicationStatusEnum;
@@ -11,7 +11,7 @@ interface StatusBadgeProps {
 export function StatusBadge({ status }: StatusBadgeProps) {
   const config = STATUS_CONFIG[status] ?? {
     label: status,
-    className: "bg-gray-50 text-gray-700",
+    className: 'bg-gray-50 text-gray-700',
   };
   return <Badge className={config.className}>{config.label}</Badge>;
 }

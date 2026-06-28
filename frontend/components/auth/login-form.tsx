@@ -1,33 +1,19 @@
-"use client";
+'use client';
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
-import { AxiosError } from "axios";
-import { ListChecks } from "lucide-react";
+import { AxiosError } from 'axios';
+import { ListChecks } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { FormEvent, useState } from 'react';
 
-import { login, fetchMe } from "@/lib/api/auth";
-import { useAuthStore } from "@/store/auth";
-import { ApiError } from "@/types";
-
-import { cn } from "@/lib/utils";
-
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import { fetchMe, login } from '@/lib/api/auth';
+import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/store/auth';
+import { ApiError } from '@/types';
 
 /**
  * Renders a login form.
@@ -35,15 +21,12 @@ import { Spinner } from "@/components/ui/spinner";
  * @param props - The props for the component.
  * @returns The login form component.
  */
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const router = useRouter();
   const { setAuth } = useAuthStore();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -64,25 +47,25 @@ export function LoginForm({
         password,
       });
 
-      localStorage.setItem("access_token", access);
-      localStorage.setItem("refresh_token", refresh);
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
 
       const user = await fetchMe();
 
       setAuth(user, access, refresh);
 
-      if (user.role === "reviewer") {
-        router.replace("/queue");
+      if (user.role === 'reviewer') {
+        router.replace('/queue');
       } else {
-        router.replace("/applications");
+        router.replace('/applications');
       }
     } catch (err) {
       const axiosError = err as AxiosError<ApiError>;
 
       if (axiosError.response?.status === 401) {
-        setError("Invalid username or password.");
+        setError('Invalid username or password.');
       } else {
-        setError("Something went wrong. Please try again.");
+        setError('Something went wrong. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -90,7 +73,7 @@ export function LoginForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
           <div className="mb-4 flex flex-col items-center gap-1 text-center">
@@ -99,18 +82,12 @@ export function LoginForm({
                 <ListChecks />
               </div>
 
-              <CardTitle className="sr-only">
-                Appli Tracker
-              </CardTitle>
+              <CardTitle className="sr-only">Appli Tracker</CardTitle>
             </div>
 
-            <h1 className="text-xl font-bold">
-              Welcome to Appli Tracker.
-            </h1>
+            <h1 className="text-xl font-bold">Welcome to Appli Tracker.</h1>
 
-            <CardDescription>
-              Create or review applications
-            </CardDescription>
+            <CardDescription>Create or review applications</CardDescription>
           </div>
         </CardHeader>
 
@@ -118,56 +95,44 @@ export function LoginForm({
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="username">
-                  Username
-                </FieldLabel>
+                <FieldLabel htmlFor="username">Username</FieldLabel>
 
                 <Input
+                  required
+                  disabled={loading}
                   id="username"
-                  type="text"
                   placeholder="Enter your username"
+                  type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  disabled={loading}
-                  required
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="password">
-                  Password
-                </FieldLabel>
+                <FieldLabel htmlFor="password">Password</FieldLabel>
 
                 <Input
+                  required
+                  disabled={loading}
                   id="password"
-                  type="password"
                   placeholder="Enter your password"
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                  required
                 />
               </Field>
 
-              {error && (
-                <p className="text-sm text-destructive">
-                  {error}
-                </p>
-              )}
+              {error && <p className="text-sm text-destructive">{error}</p>}
 
               <Field>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={loading}
-                >
+                <Button className="w-full" disabled={loading} type="submit">
                   {loading ? (
                     <>
                       <Spinner className="size-4" />
                       Signing in...
                     </>
                   ) : (
-                    "Login"
+                    'Login'
                   )}
                 </Button>
               </Field>
