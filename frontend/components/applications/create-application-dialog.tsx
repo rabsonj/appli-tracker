@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,10 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { createApplication } from "@/lib/api/applications";
-import { ApplicationWritePayload, Category } from "@/types";
+import { Category } from "@/types";
+import { useCreateApplicationForm } from "@/hooks/use-create-application-form";
 
 const CATEGORIES: { value: Category; label: string }[] = [
   { value: "general", label: "General Request" },
@@ -31,13 +29,6 @@ const CATEGORIES: { value: Category; label: string }[] = [
   { value: "procurement", label: "Procurement" },
   { value: "other", label: "Other" },
 ];
-
-const EMPTY_FORM: ApplicationWritePayload = {
-  title: "",
-  category: "general",
-  description: "",
-  amount: undefined,
-};
 
 interface CreateApplicationDialogProps {
   open: boolean;
@@ -50,45 +41,22 @@ export function CreateApplicationDialog({
   onOpenChange,
   onSuccess,
 }: CreateApplicationDialogProps) {
-  const [form, setForm] = useState<ApplicationWritePayload>(EMPTY_FORM);
-  const [creating, setCreating] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const {
+    form,
+    creating,
+    fieldErrors,
+    handleFormChange,
+    handleCategoryChange,
+    handleCreate,
+    resetForm,
+  } = useCreateApplicationForm(() => {
+    onSuccess();
+    onOpenChange(false);
+  });
 
   const handleCancel = () => {
-    setForm(EMPTY_FORM);
-    setFieldErrors({});
+    resetForm();
     onOpenChange(false);
-  };
-
-  const handleCreate = async () => {
-    setCreating(true);
-    setFieldErrors({});
-
-    try {
-      await createApplication(form);
-      toast.success("Application created successfully.");
-      setForm(EMPTY_FORM);
-      onOpenChange(false);
-      onSuccess();
-    } catch (err: unknown) {
-      const detail =
-        (err as { response: { data: { detail: string } } })?.response?.data
-          ?.detail;
-
-      if (detail && typeof detail === "object") {
-        const errors: Record<string, string> = {};
-        for (const [field, messages] of Object.entries(detail)) {
-          errors[field] = Array.isArray(messages)
-            ? (messages[0] as string)
-            : String(messages);
-        }
-        setFieldErrors(errors);
-      } else {
-        toast.error(detail ?? "Failed to create application.");
-      }
-    } finally {
-      setCreating(false);
-    }
   };
 
   return (
@@ -105,7 +73,7 @@ export function CreateApplicationDialog({
             <Input
               id="title"
               value={form.title}
-              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+              onChange={(e) => handleFormChange("title", e.target.value)}
             />
             {fieldErrors.title && (
               <p className="text-sm text-destructive">{fieldErrors.title}</p>
@@ -117,7 +85,7 @@ export function CreateApplicationDialog({
             <Label>Category</Label>
             <Select
               value={form.category}
-              onValueChange={(v) => setForm((f) => ({ ...f, category: v as Category }))}
+              onValueChange={(v) => handleCategoryChange(v as Category)}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -142,10 +110,7 @@ export function CreateApplicationDialog({
               value={form.amount ?? ""}
               onChange={(e) => {
                 const value = e.target.value;
-                setForm((f) => ({
-                  ...f,
-                  amount: value === "" ? undefined : Number(value),
-                }));
+                handleFormChange("amount", value === "" ? undefined : Number(value));
               }}
             />
           </div>
@@ -156,7 +121,7 @@ export function CreateApplicationDialog({
             <Textarea
               rows={4}
               value={form.description}
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              onChange={(e) => handleFormChange("description", e.target.value)}
             />
           </div>
         </div>
