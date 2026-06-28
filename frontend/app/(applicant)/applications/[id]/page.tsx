@@ -8,7 +8,6 @@ import {
   updateApplication,
   submitApplication,
 } from "@/lib/api/applications";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,12 +24,12 @@ import { ArrowLeft, Send, Loader2, Info } from "lucide-react";
 import {
   Application,
   ApplicationCategoryEnum,
-  ApplicationStatusEnum,
   PatchedApplication,
 } from "@/types";
 import { formatAmount } from "@/utils/application";
 import { StatusBadge } from "@/components/status-badge";
-import { AUDIT_DOT_COLOR } from "@/constants";
+import { InfoSection } from "@/components/applications/info-section";
+import { ActivitySection } from "@/components/applications/activity-section";
 
 const CATEGORIES: { value: ApplicationCategoryEnum; label: string }[] = [
   { value: "general", label: "General Request" },
@@ -321,71 +320,8 @@ export default function ApplicationDetailPage() {
 
         {/* Sidebar */}
         <div className="space-y-5">
-          <div className="rounded-lg border bg-card p-5">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-3">
-              Info
-            </p>
-            <div className="space-y-0 divide-y divide-border">
-              {[
-                {
-                  label: "Status",
-                  value: <StatusBadge status={app.status} />,
-                },
-                { label: "Owner", value: app.owner.email },
-                {
-                  label: "Created",
-                  value: new Date(app.created_at).toLocaleDateString(),
-                },
-                {
-                  label: "Last updated",
-                  value: new Date(app.updated_at).toLocaleDateString(),
-                },
-              ].map(({ label, value }) => (
-                <div
-                  key={label}
-                  className="flex items-center justify-between py-2 text-sm"
-                >
-                  <span className="text-muted-foreground">{label}</span>
-                  <span className="font-medium">{value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-lg border bg-card p-5">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-3">
-              Activity
-            </p>
-            {app.audit_logs.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No activity yet.</p>
-            ) : (
-              <div className="space-y-0 divide-y divide-border">
-                {app.audit_logs.map((log) => (
-                  <div key={log.id} className="flex gap-3 py-3">
-                    <div
-                      className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${
-                        AUDIT_DOT_COLOR[log.to_status] ?? "bg-gray-400"
-                      }`}
-                    />
-                    <div>
-                      <p className="text-sm">
-                        <span className="font-medium">{log.actor.email}</span>{" "}
-                        moved to <StatusBadge status={log.to_status as ApplicationStatusEnum} />
-                      </p>
-                      {log.comment && (
-                        <p className="text-xs text-muted-foreground mt-0.5 italic">
-                          &quot;{log.comment}&quot;
-                        </p>
-                      )}
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {new Date(log.created_at).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <InfoSection app={app} />
+          <ActivitySection app={app} />
         </div>
       </div>
     </div>
