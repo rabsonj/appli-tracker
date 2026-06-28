@@ -36,7 +36,7 @@ import {
   startReview,
 } from '@/lib/api/applications';
 import { Application } from '@/types';
-import { formatAmount } from '@/utils/application';
+import { formatAmount, isReturnedForChanges } from '@/utils/application';
 import { getInitials } from '@/utils/user';
 
 type ModalType = 'reject' | 'return' | null;
@@ -153,6 +153,7 @@ export default function ReviewerApplicationDetailPage() {
 
   const isSubmitted = app.status === 'submitted';
   const isUnderReview = app.status === 'under_review';
+  const returnedForChanges = isReturnedForChanges(app as Application);
 
   return (
     <div className="container mx-auto py-10 space-y-6 max-w-5xl">
@@ -170,14 +171,16 @@ export default function ReviewerApplicationDetailPage() {
         <div className="space-y-1.5">
           <h1 className="text-xl font-semibold">{app.title}</h1>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <StatusBadge status={app.status} />
+            <StatusBadge
+              status={returnedForChanges === true ? 'returned_for_changes' : app.status}
+            />
             <span>·</span>
             <div className="h-5 w-5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 flex items-center justify-center text-[10px] font-medium">
               {getInitials(app.owner)}
             </div>
             <span>{app.owner.username}</span>
             <span>·</span>
-            <span>Updated {new Date(app.updated_at).toLocaleDateString()}</span>
+            <span>Updated {new Date(app.updated_at).toLocaleString()}</span>
           </div>
         </div>
 

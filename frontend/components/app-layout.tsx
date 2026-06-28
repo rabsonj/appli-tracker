@@ -22,7 +22,7 @@ export default function AppLayout({
 }: {
   children: React.ReactNode;
   navItems: { title: string; url: string }[];
-  breadcrumb: string;
+  breadcrumb: { title: string; url: string };
   navDescription?: string;
 }) {
   return (
@@ -34,7 +34,7 @@ export default function AppLayout({
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">{breadcrumb}</BreadcrumbLink>
+                <BreadcrumbLink href={breadcrumb.url}>{breadcrumb.title}</BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
