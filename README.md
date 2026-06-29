@@ -136,6 +136,16 @@ Appli-Tracker is a small, two-sided web application designed for a generic reque
     ```
     The frontend application will be accessible at `http://localhost:3000`.
 
+## Deployment
+### Frontend
+The frontend is deployed on [Vercel](https://vercel.com/rabson-j-phiris-projects). Vercel makes it easy to deploy frontend apps, especially Next.js apps.
+
+### Backend
+The backend (Django) is deployed on [Railway](https://railway.com/). Railway makes it easy to deploy backend apps with a few clicks.
+
+### Database
+The database (PostgreSQL) is deployed on [Railway](https://railway.com/). Railway makes it easy to deploy backend apps with a few clicks.
+
 ## Live Application
 
 The application is deployed and accessible at: [https://appli-tracker-gray.vercel.app](https://appli-tracker-gray.vercel.app)
