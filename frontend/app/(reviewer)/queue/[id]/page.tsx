@@ -223,7 +223,7 @@ export default function ReviewerApplicationDetailPage() {
               >
                 <XCircle className="mr-2 h-4 w-4" /> Reject
               </Button>
-              <Button variant="outline" onClick={() => setModal('return')}>
+              <Button variant="outline" style={{ backgroundColor: 'purple' }} onClick={() => setModal('return')}>
                 <RotateCcw className="mr-2 h-4 w-4" /> Return for changes
               </Button>
             </>
